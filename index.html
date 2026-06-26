@@ -358,6 +358,21 @@
 
     const STORAGE_KEY = 'wc26_predictions';
 
+    const flags = {
+      'Mexico':'mx','South Africa':'za','South Korea':'kr','Czechia':'cz',
+      'Switzerland':'ch','Canada':'ca','Bosnia & H.':'ba','Qatar':'qa',
+      'Brazil':'br','Morocco':'ma','Scotland':'gb-sct','Haiti':'ht',
+      'USA':'us','Australia':'au','Paraguay':'py','Türkiye':'tr',
+      'Germany':'de',"Côte d'Ivoire":'ci','Ecuador':'ec','Curaçao':'cw',
+      'Netherlands':'nl','Japan':'jp','Sweden':'se','Tunisia':'tn',
+      'Egypt':'eg','Iran':'ir','Belgium':'be','New Zealand':'nz',
+      'Spain':'es','Uruguay':'uy','Cape Verde':'cv','Saudi Arabia':'sa',
+      'France':'fr','Norway':'no','Senegal':'sn','Iraq':'iq',
+      'Argentina':'ar','Algeria':'dz','Austria':'at','Jordan':'jo',
+      'Colombia':'co','Portugal':'pt','DR Congo':'cd','Uzbekistan':'uz',
+      'England':'gb-eng','Ghana':'gh','Croatia':'hr','Panama':'pa',
+    };
+
     function loadPredictions() {
       try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
       catch { return {}; }
@@ -402,10 +417,10 @@
       ],
       e: [
         { h: 'Germany', a: 'Curaçao', hs: 7, as: 1 },
-        { h: 'Côte d\'Ivoire', a: 'Ecuador', hs: 1, as: 0 },
-        { h: 'Germany', a: 'Côte d\'Ivoire', hs: 2, as: 1 },
+        { h: "Côte d'Ivoire", a: 'Ecuador', hs: 1, as: 0 },
+        { h: 'Germany', a: "Côte d'Ivoire", hs: 2, as: 1 },
         { h: 'Ecuador', a: 'Curaçao', hs: 0, as: 0 },
-        { h: 'Curaçao', a: 'Côte d\'Ivoire', hs: 0, as: 2 },
+        { h: 'Curaçao', a: "Côte d'Ivoire", hs: 0, as: 2 },
         { h: 'Ecuador', a: 'Germany', hs: 2, as: 1 },
       ],
       f: [
@@ -466,6 +481,12 @@
       ],
     };
 
+    function flagUrl(code) {
+      if (code === 'gb-sct') return 'https://flagcdn.com/16x12/gb-sct.png';
+      if (code === 'gb-eng') return 'https://flagcdn.com/16x12/gb-eng.png';
+      return `https://flagcdn.com/16x12/${code}.png`;
+    }
+
     function computeStandings(groupId, preds) {
       const matches = groupMatches[groupId];
       const teams = {};
@@ -501,10 +522,12 @@
         const g = el.dataset.group;
         const rows = computeStandings(g, preds);
         el.innerHTML = `<table>
-          <thead><tr><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
-          <tbody>${rows.map((t) => {
+          <thead><tr><th>#</th><th></th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
+          <tbody>${rows.map((t, i) => {
             const gd = t.gd > 0 ? '+' + t.gd : String(t.gd);
-            return `<tr><td>${t.name}</td><td>${t.p}</td><td>${gd}</td><td>${t.pts}</td></tr>`;
+            const code = flags[t.name] || 'xx';
+            const cls = i < 2 ? ' class="qual"' : '';
+            return `<tr${cls}><td class="pos">${i + 1}</td><td class="flag-cell"><img src="${flagUrl(code)}" alt="" loading="lazy"></td><td>${t.name}</td><td>${t.p}</td><td>${gd}</td><td>${t.pts}</td></tr>`;
           }).join('')}</tbody>
         </table>`;
       });
