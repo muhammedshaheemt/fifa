@@ -125,12 +125,28 @@ th {
   border-top: 1px solid var(--border);
 }
 .fixture-item:first-of-type { border-top: none; padding-top: 0; }
+.fixture-item.predict { justify-content: center; gap: 6px; flex-wrap: wrap; }
 .ft-tag {
   color: var(--green);
   font-weight: 700;
   font-size: 0.8rem;
   text-transform: uppercase;
 }
+
+.score-picker { display: inline-flex; align-items: center; gap: 4px; }
+.score-picker .scr-btn {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--panel);
+  color: var(--text); font-size: 1rem; font-weight: 700;
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  line-height: 1; padding: 0;
+}
+.score-picker .scr-btn:hover { background: var(--panel-2); }
+.score-picker .score {
+  min-width: 20px; text-align: center; font-weight: 700;
+  color: var(--text); font-size: 1rem;
+}
+.predict .vs { color: var(--muted); font-size: 0.8rem; }
 
 @media (max-width: 700px) {
   body { padding: 12px; }
