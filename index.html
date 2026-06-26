@@ -12,8 +12,7 @@
       <h1>FIFA WORLD CUP 2026</h1>
       <p>Scores updated <span id="live-time">--:--</span></p>
       <nav class="nav">
-        <button class="active" data-view="groups">Groups</button>
-        <button data-view="knockouts">Knockouts</button>
+        <button class="active">Groups</button>
       </nav>
     </header>
 
@@ -231,35 +230,9 @@
       </div>
     </section>
 
-    <section class="section" id="knockouts-view" hidden>
-      <div class="section-title">
-        <h2>Knockouts</h2>
-        <span class="badge">Complete</span>
-      </div>
-      <div class="knockout-list">
-        <div class="knockout-item"><strong>Round of 16:</strong> Argentina 2-1 Australia <span class="ft-tag">FT</span></div>
-        <div class="knockout-item"><strong>Quarterfinal:</strong> France 2-1 England <span class="ft-tag">FT</span></div>
-        <div class="knockout-item"><strong>Semifinal:</strong> Argentina 3-0 Croatia <span class="ft-tag">FT</span></div>
-        <div class="knockout-item"><strong>Final:</strong> Argentina 3-3 France <span class="ft-tag">FT</span></div>
-      </div>
-    </section>
   </div>
 
   <script>
-    const buttons = document.querySelectorAll('.nav button');
-    const groupsView = document.getElementById('groups-view');
-    const knockoutsView = document.getElementById('knockouts-view');
-
-    buttons.forEach((button) => {
-      button.addEventListener('click', () => {
-        buttons.forEach((b) => b.classList.remove('active'));
-        button.classList.add('active');
-        const view = button.dataset.view;
-        groupsView.hidden = view !== 'groups';
-        knockoutsView.hidden = view !== 'knockouts';
-      });
-    });
-
     const liveTime = document.getElementById('live-time');
     if (liveTime) {
       const now = new Date();
