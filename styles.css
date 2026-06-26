@@ -74,6 +74,12 @@ body {
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 700;
+  white-space: nowrap;
+}
+.badge.warn {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fcd34d;
 }
 
 .group-grid {
@@ -87,7 +93,7 @@ body {
   border-radius: 10px;
   padding: 12px;
 }
-.group-card h3 { margin: 0 0 10px; font-size: 0.95rem; }
+.group-card h3 { margin: 0 0 10px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
 
 table {
   width: 100%;
