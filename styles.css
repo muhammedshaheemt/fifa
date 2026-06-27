@@ -1,11 +1,12 @@
 :root {
-  --bg: #0a1628;
-  --panel: #0f1f3a;
-  --panel-2: #142847;
-  --text: #e8edf5;
-  --muted: #8899b4;
+  --bg: #000000;
+  --panel: #0d0d0d;
+  --panel-2: #1a1a1a;
+  --text: #f0f0f0;
+  --muted: #888888;
   --green: #22c55e;
-  --border: #1e3a5f;
+  --gold: #f59e0b;
+  --border: #2a2a2a;
 }
 
 * { box-sizing: border-box; }
@@ -20,7 +21,7 @@ body {
 
 .container { max-width: 1240px; margin: 0 auto; }
 .header {
-  background: #0d1d36;
+  background: #0a0a0a;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px;
@@ -46,9 +47,9 @@ body {
 }
 .section-title h2 { margin: 0; font-size: 1.1rem; }
 .badge {
-  background: #0f2a1e;
+  background: #1a1a1a;
   color: var(--green);
-  border: 1px solid #1a4a32;
+  border: 1px solid #2a2a2a;
   padding: 5px 8px;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -56,9 +57,14 @@ body {
   white-space: nowrap;
 }
 .badge.warn {
-  background: #2a2210;
-  color: #fbbf24;
-  border-color: #4a3a18;
+  background: #1a1a1a;
+  color: var(--gold);
+  border-color: #2a2a2a;
+}
+.badge.qual {
+  background: #0a2a1a;
+  color: var(--green);
+  border-color: #1a4a32;
 }
 
 .group-grid {
@@ -94,9 +100,10 @@ th {
 td.pos { width: 20px; text-align: center; color: var(--muted); font-size: 0.8rem; font-weight: 700; }
 td.flag-cell { width: 22px; padding-right: 0; }
 td.flag-cell img { display: block; width: 18px; height: auto; border-radius: 2px; }
-tr.qual td { background: #0a2418; }
-tr.qual + tr.qual td { background: #0a2418; }
+tr.qual td { background: #0a1a12; }
+tr.qual + tr.qual td { background: #0a1a12; }
 tr.qual td:first-child { border-left: 3px solid var(--green); }
+tr.qual td.name-cell { color: var(--green); font-weight: 700; }
 
 .fixture-list { display: grid; gap: 8px; }
 .fixture-item {
