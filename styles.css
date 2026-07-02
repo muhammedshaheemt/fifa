@@ -10,6 +10,8 @@
   --secondary-foreground: oklch(98.5% 0 0);
   --muted: oklch(26.9% 0 0);
   --muted-foreground: oklch(70.8% 0 0);
+  --border: oklch(100% 0 0 / 0.1);
+  --accent: oklch(26.9% 0 0);
   --radius: 0.625rem;
 }
 
@@ -32,6 +34,33 @@ body {
   border-radius: var(--radius);
   padding: 20px 24px;
   margin-bottom: 16px;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.reset-btn {
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: calc(var(--radius) * 0.8);
+  cursor: pointer;
+  transition: background 0.12s ease;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.reset-btn:hover {
+  background: oklch(60% 0.14 152 / 0.15);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .header-title {
@@ -57,7 +86,7 @@ body {
 
 .tab {
   border: none;
-  background: transparent;
+  background: var(--secondary);
   color: var(--muted-foreground);
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
@@ -81,6 +110,14 @@ body {
 
 .tab-content { display: none; }
 .tab-content.active { display: block; }
+#knockouts-view { margin-top: 0; }
+
+.section-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 12px;
+}
 
 .group-grid {
   display: grid;
@@ -90,7 +127,7 @@ body {
 
 .group-card {
   background: var(--card);
-  border: 1px solid oklch(100% 0 0 / 0.1);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 14px;
 }
@@ -107,7 +144,7 @@ body {
 .badge {
   background: var(--secondary);
   color: var(--primary);
-  border: 1px solid oklch(100% 0 0 / 0.1);
+  border: 1px solid var(--border);
   padding: 3px 8px;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -129,7 +166,7 @@ table {
 th, td {
   text-align: left;
   padding: 5px 4px;
-  border-bottom: 1px solid oklch(100% 0 0 / 0.1);
+  border-bottom: 1px solid var(--border);
 }
 
 th {
@@ -224,7 +261,7 @@ tr.qual td.name-cell { color: var(--primary); font-weight: 600; }
 .scr-btn {
   width: 24px;
   height: 28px;
-  background: transparent;
+  background: var(--secondary);
   color: var(--muted-foreground);
   font-size: 0.875rem;
   font-weight: 600;
@@ -286,48 +323,51 @@ tr.qual td.name-cell { color: var(--primary); font-weight: 600; }
 }
 
 .bracket {
-  background: var(--card);
-  border: 1px solid oklch(100% 0 0 / 0.1);
-  border-radius: var(--radius);
-  padding: 20px;
   overflow-x: auto;
 }
 
 .bracket-inner {
   display: flex;
-  gap: 24px;
+  gap: 28px;
   min-width: min-content;
   align-items: stretch;
+  position: relative;
 }
 
 .bracket-col {
   display: flex;
   flex-direction: column;
-  width: 190px;
+  width: 200px;
   flex-shrink: 0;
   position: relative;
 }
 
 .bracket-round-label {
-  position: sticky;
-  top: 0;
-  z-index: 10;
   text-align: center;
   font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--muted-foreground);
-  padding: 6px 0 10px;
-  background: var(--card);
+  padding: 6px 0 12px;
 }
 
 .bracket-matches {
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 6px;
+  gap: 8px;
   position: relative;
+  justify-content: flex-start;
+  min-height: 0;
+}
+
+.bracket-col:first-child .bracket-matches {
+  gap: 8px;
+}
+
+.bracket-col:not(:first-child) .bracket-matches {
+  gap: 0;
 }
 
 .bracket-match {
@@ -339,17 +379,17 @@ tr.qual td.name-cell { color: var(--primary); font-weight: 600; }
 .match-card {
   flex: 1;
   background: var(--secondary);
-  border: 1px solid oklch(100% 0 0 / 0.1);
+  border: 1px solid var(--border, oklch(100% 0 0 / 0.1));
   border-radius: calc(var(--radius) * 0.8);
-  padding: 6px 10px;
+  padding: 7px 10px;
   min-width: 0;
+  position: relative;
 }
 
 .match-team {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   padding: 2px 0;
   font-size: 0.8125rem;
 }
@@ -366,7 +406,7 @@ tr.qual td.name-cell { color: var(--primary); font-weight: 600; }
 .match-team .team-score {
   flex-shrink: 0;
   font-weight: 600;
-  min-width: 20px;
+  min-width: 22px;
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
@@ -376,13 +416,58 @@ tr.qual td.name-cell { color: var(--primary); font-weight: 600; }
   font-weight: 600;
 }
 
+.match-team.selectable {
+  cursor: pointer;
+  transition: background 0.12s ease;
+  border-radius: 4px;
+  margin: 0 -4px;
+  padding: 2px 4px;
+}
+
+.match-team.selectable:hover {
+  background: var(--primary);
+  background: oklch(60% 0.14 152 / 0.1);
+}
+
+.match-team.picked {
+  background: oklch(60% 0.14 152 / 0.12);
+  border-radius: 4px;
+  margin: 0 -4px;
+  padding: 2px 4px;
+  color: var(--primary);
+  font-weight: 600;
+}
+
 .match-note {
   font-size: 0.6875rem;
   color: var(--muted-foreground);
   text-align: center;
   padding-top: 2px;
-  border-top: 1px solid oklch(100% 0 0 / 0.1);
+  border-top: 1px solid var(--border, oklch(100% 0 0 / 0.1));
   margin-top: 2px;
+}
+
+.bracket-flag {
+  width: 18px;
+  height: auto;
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: block;
+  box-shadow: 0 0 0 1px var(--border, oklch(100% 0 0 / 0.1));
+}
+
+.bracket-flag.placeholder {
+  width: 18px;
+  height: 12px;
+  background: var(--muted);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.bracket-gap {
+  width: 28px;
+  flex-shrink: 0;
+  position: relative;
 }
 
 @media (max-width: 700px) {

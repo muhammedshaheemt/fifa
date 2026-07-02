@@ -12,20 +12,26 @@
 <body>
   <div class="container">
     <header class="header">
-      <h1 class="header-title">FIFA WORLD CUP 2026</h1>
-      <p class="header-sub">Scores updated <span id="live-time">--:--</span></p>
+      <div class="header-row">
+        <div>
+          <h1 class="header-title">FIFA WORLD CUP 2026</h1>
+          <p class="header-sub">Scores updated <span id="live-time">--:--</span></p>
+        </div>
+        <button class="reset-btn" id="reset-btn">Reset</button>
+      </div>
     </header>
 
     <div class="tabs">
-      <button class="tab active" data-tab="groups">Groups</button>
-      <button class="tab" data-tab="knockouts">Knockouts</button>
+      <button class="tab" data-tab="groups">Groups</button>
+      <button class="tab active" data-tab="knockouts">Knockouts</button>
     </div>
 
-    <div id="groups-view" class="tab-content active">
+    <div id="groups-view" class="tab-content">
       <div class="group-grid" id="group-grid"></div>
     </div>
 
-    <div id="knockouts-view" class="tab-content">
+    <div id="knockouts-view" class="tab-content active">
+      <h2 class="section-heading">Knockout Stage</h2>
       <div class="bracket" id="bracket"></div>
     </div>
   </div>
@@ -37,7 +43,7 @@
       liveTime.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    const completedGroups = new Set('abcdefghi'.split(''));
+    const completedGroups = new Set('abcdefghijkl'.split(''));
 
     const flags = {
       'Mexico':'mx','South Africa':'za','South Korea':'kr','Czechia':'cz',
@@ -52,8 +58,6 @@
       'Argentina':'ar','Algeria':'dz','Austria':'at','Jordan':'jo',
       'Colombia':'co','Portugal':'pt','DR Congo':'cd','Uzbekistan':'uz',
       'England':'gb-eng','Ghana':'gh','Croatia':'hr','Panama':'pa',
-      'Bosnia':'ba','Sweden':'se','Turkey':'tr','Czech Republic':'cz',
-      'Cabo Verde':'cv','Ivory Coast':'ci','DR Congo':'cd',
     };
 
     function flagUrl(code) {
@@ -297,71 +301,128 @@
       attachFixtureListeners();
     }
 
-    function isWinner(hs, as) {
-      if (hs === '' || as === '' || hs === undefined || as === undefined) return false;
-      return parseInt(hs) > parseInt(as);
+    const BRACKET_SEED_KEY = 'wc26_bracket_seeds';
+    const roundMeta = [
+      { id: 'r32', label: 'Round of 32' },
+      { id: 'r16', label: 'Round of 16' },
+      { id: 'qf', label: 'Quarter-finals' },
+      { id: 'sf', label: 'Semi-finals' },
+      { id: 'fn', label: 'Final' },
+    ];
+
+    const bracketData = {
+      r32: [
+        { h: 'Germany', hs: '1', a: 'Paraguay', as: '1', note: '4-3 pens' },    // 74 → R16[0].h
+        { h: 'France', hs: '3', a: 'Sweden', as: '0' },                         // 77 → R16[0].a
+        { h: 'South Africa', hs: '0', a: 'Canada', as: '1' },                   // 73 → R16[1].h
+        { h: 'Netherlands', hs: '1', a: 'Morocco', as: '1', note: '2-3 pens' }, // 75 → R16[1].a
+        { h: 'Portugal', hs: '', a: 'Croatia', as: '' },                        // 83 → R16[2].h
+        { h: 'Spain', hs: '', a: 'Austria', as: '' },                           // 84 → R16[2].a
+        { h: 'USA', hs: '2', a: 'Bosnia & H.', as: '0' },                      // 81 → R16[3].h
+        { h: 'Belgium', hs: '3', a: 'Senegal', as: '2' },                       // 82 → R16[3].a
+        { h: 'Brazil', hs: '2', a: 'Japan', as: '1' },                          // 76 → R16[4].h
+        { h: 'Norway', hs: '2', a: "Côte d'Ivoire", as: '1' },                 // 78 → R16[4].a
+        { h: 'Mexico', hs: '2', a: 'Ecuador', as: '0' },                        // 79 → R16[5].h
+        { h: 'England', hs: '2', a: 'DR Congo', as: '1' },                      // 80 → R16[5].a
+        { h: 'Argentina', hs: '', a: 'Cape Verde', as: '' },                    // 86 → R16[6].h
+        { h: 'Australia', hs: '', a: 'Egypt', as: '' },                         // 88 → R16[6].a
+        { h: 'Switzerland', hs: '', a: 'Algeria', as: '' },                     // 85 → R16[7].h
+        { h: 'Colombia', hs: '', a: 'Ghana', as: '' },                          // 87 → R16[7].a
+      ],
+      r16: [
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 89: winner 74 vs winner 77
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 90: winner 73 vs winner 75
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 93: winner 83 vs winner 84
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 94: winner 81 vs winner 82
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 91: winner 76 vs winner 78
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 92: winner 79 vs winner 80
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 95: winner 86 vs winner 88
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 96: winner 85 vs winner 87
+      ],
+      qf: [
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 97: winner 89 vs winner 90
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 98: winner 93 vs winner 94
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 99: winner 91 vs winner 92
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 100: winner 95 vs winner 96
+      ],
+      sf: [
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 101: winner 97 vs winner 98
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 102: winner 99 vs winner 100
+      ],
+      fn: [
+        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // Final: winner 101 vs winner 102
+      ],
+    };
+
+    function loadSeeds() {
+      try { return JSON.parse(localStorage.getItem(BRACKET_SEED_KEY)) || {}; }
+      catch { return {}; }
+    }
+
+    function saveSeeds(s) {
+      localStorage.setItem(BRACKET_SEED_KEY, JSON.stringify(s));
+    }
+
+    function getWinner(roundId, midx, seeds, noScore) {
+      const m = bracketData[roundId][midx];
+      const seed = seeds[roundId + '-' + midx];
+      if (seed) return seed;
+      if (!noScore) {
+        const hs = parseInt(m.hs);
+        const as = parseInt(m.as);
+        if (!isNaN(hs) && !isNaN(as)) {
+          if (hs > as) return m.h;
+          if (as > hs) return m.a;
+        }
+      }
+      const ri = roundMeta.findIndex(r => r.id === roundId);
+      if (ri >= 0 && ri < roundMeta.length - 1) {
+        const nextId = roundMeta[ri + 1].id;
+        const nextM = bracketData[nextId][Math.floor(midx / 2)];
+        if (nextM) {
+          if (nextM.h === m.h) return m.h;
+          if (nextM.h === m.a) return m.a;
+          if (nextM.a === m.h) return m.h;
+          if (nextM.a === m.a) return m.a;
+        }
+      }
+      return null;
+    }
+
+    function clearDownstream(seeds, roundId, midx) {
+      const ri = roundMeta.findIndex(r => r.id === roundId);
+      if (ri < 0 || ri >= roundMeta.length - 1) return;
+      const nextId = roundMeta[ri + 1].id;
+      const nextMidx = Math.floor(midx / 2);
+      delete seeds[nextId + '-' + nextMidx];
+      clearDownstream(seeds, nextId, nextMidx);
+    }
+
+    function resolveBracket(seeds) {
+      const r = JSON.parse(JSON.stringify(bracketData));
+      for (let ri = 1; ri < roundMeta.length; ri++) {
+        const prev = roundMeta[ri - 1].id;
+        const curr = roundMeta[ri].id;
+        r[curr].forEach((m, mi) => {
+          const t = r[prev][mi * 2];
+          const b = r[prev][mi * 2 + 1];
+          if (t) m.h = getWinner(prev, mi * 2, seeds, true) || 'TBD';
+          if (b) m.a = getWinner(prev, mi * 2 + 1, seeds, true) || 'TBD';
+        });
+      }
+      return r;
     }
 
     function renderBracket() {
-      const rounds = [
-        { label: 'Round of 32', id: 'r32' },
-        { label: 'Round of 16', id: 'r16' },
-        { label: 'Quarter-finals', id: 'qf' },
-        { label: 'Semi-finals', id: 'sf' },
-        { label: 'Final', id: 'fn' },
-      ];
-
+      const seeds = loadSeeds();
+      const resolved = resolveBracket(seeds);
       const bracket = document.getElementById('bracket');
       bracket.innerHTML = '';
-
-      const bracketData = {
-        r32: [
-          { h: 'South Africa', hs: '0', a: 'Canada', as: '1' },
-          { h: 'Germany', hs: '1', a: 'Paraguay', as: '1', note: '4-3 pens' },
-          { h: 'Netherlands', hs: '1', a: 'Morocco', as: '1', note: '2-3 pens' },
-          { h: 'Brazil', hs: '2', a: 'Japan', as: '1' },
-          { h: 'France', hs: '3', a: 'Sweden', as: '0' },
-          { h: 'Norway', hs: '2', a: 'Ivory Coast', as: '1' },
-          { h: 'Mexico', hs: '2', a: 'Ecuador', as: '0' },
-          { h: 'England', hs: '2', a: 'DR Congo', as: '1' },
-          { h: 'USA', hs: '2', a: 'Bosnia', as: '0' },
-          { h: 'Belgium', hs: '3', a: 'Senegal', as: '2' },
-          { h: 'Portugal', hs: '', a: 'Croatia', as: '' },
-          { h: 'Spain', hs: '', a: 'Austria', as: '' },
-          { h: 'Switzerland', hs: '', a: 'Algeria', as: '' },
-          { h: 'Argentina', hs: '', a: 'Cape Verde', as: '' },
-          { h: 'Colombia', hs: '', a: 'Ghana', as: '' },
-          { h: 'Australia', hs: '', a: 'Egypt', as: '' },
-        ],
-        r16: [
-          { h: 'Canada', hs: '', a: 'Paraguay', as: '' },
-          { h: 'Morocco', hs: '', a: 'Brazil', as: '' },
-          { h: 'France', hs: '', a: 'Norway', as: '' },
-          { h: 'Mexico', hs: '', a: 'England', as: '' },
-          { h: 'USA', hs: '', a: 'Belgium', as: '' },
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-        ],
-        qf: [
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-        ],
-        sf: [
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-        ],
-        fn: [
-          { h: 'TBD', hs: '', a: 'TBD', as: '' },
-        ],
-      };
 
       const wrapper = document.createElement('div');
       wrapper.className = 'bracket-inner';
 
-      rounds.forEach((round, ri) => {
+      roundMeta.forEach((round, ri) => {
         const col = document.createElement('div');
         col.className = 'bracket-col';
 
@@ -372,27 +433,35 @@
 
         const matchList = document.createElement('div');
         matchList.className = 'bracket-matches';
-
-        const matches = bracketData[round.id];
+        const matches = resolved[round.id];
 
         matches.forEach((m, mi) => {
           const card = document.createElement('div');
           card.className = 'bracket-match';
-          if (ri > 0) card.classList.add('has-left');
-          if (ri < rounds.length - 1) card.classList.add('has-right');
+          card.dataset.round = round.id;
+          card.dataset.midx = mi;
 
-          const hw = isWinner(m.hs, m.as) ? ' winner' : '';
-          const aw = isWinner(m.as, m.hs) ? ' winner' : '';
+          const seed = seeds[round.id + '-' + mi];
+          const hPick = seed === m.h;
+          const aPick = seed === m.a;
+          const isTbd = m.h === 'TBD' || m.a === 'TBD';
+          const hClass = 'match-team' + (hPick ? ' winner picked' : '') + (!isTbd ? ' selectable' : '');
+          const aClass = 'match-team' + (aPick ? ' winner picked' : '') + (!isTbd ? ' selectable' : '');
+
+          const hFlagCode = flags[m.h] || null;
+          const aFlagCode = flags[m.a] || null;
 
           card.innerHTML = `
             <div class="match-card">
-              <div class="match-team${hw}">
+              <div class="${hClass}" data-side="h">
+                ${hFlagCode ? '<img src="' + flagUrl(hFlagCode) + '" alt="" class="bracket-flag">' : '<span class="bracket-flag placeholder"></span>'}
                 <span class="team-name">${m.h}</span>
-                <span class="team-score">${m.hs !== '' ? m.hs : '-'}</span>
+                <span class="team-score">${m.hs !== '' && m.hs !== undefined ? m.hs : '-'}</span>
               </div>
-              <div class="match-team${aw}">
+              <div class="${aClass}" data-side="a">
+                ${aFlagCode ? '<img src="' + flagUrl(aFlagCode) + '" alt="" class="bracket-flag">' : '<span class="bracket-flag placeholder"></span>'}
                 <span class="team-name">${m.a}</span>
-                <span class="team-score">${m.as !== '' ? m.as : '-'}</span>
+                <span class="team-score">${m.as !== '' && m.as !== undefined ? m.as : '-'}</span>
               </div>
               ${m.note ? '<div class="match-note">' + m.note + '</div>' : ''}
             </div>
@@ -403,7 +472,7 @@
         col.appendChild(matchList);
         wrapper.appendChild(col);
 
-        if (ri < rounds.length - 1) {
+        if (ri < roundMeta.length - 1) {
           const gap = document.createElement('div');
           gap.className = 'bracket-gap';
           wrapper.appendChild(gap);
@@ -411,7 +480,112 @@
       });
 
       bracket.appendChild(wrapper);
+
+      bracket.querySelectorAll('.match-team.selectable').forEach(el => {
+        el.addEventListener('click', () => {
+          const card = el.closest('.bracket-match');
+          const rid = card.dataset.round;
+          const mi = parseInt(card.dataset.midx);
+          const side = el.dataset.side;
+          const match = resolved[rid][mi];
+          const team = side === 'h' ? match.h : match.a;
+          const s = loadSeeds();
+          const key = rid + '-' + mi;
+          if (s[key] === team) {
+            delete s[key];
+          } else {
+            s[key] = team;
+          }
+          clearDownstream(s, rid, mi);
+          saveSeeds(s);
+          renderBracket();
+        });
+      });
+
+      requestAnimationFrame(() => {
+        const cols = wrapper.querySelectorAll('.bracket-col');
+
+        const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--connector').trim() || 'oklch(60% 0.14 150)';
+
+        for (let ri = 1; ri < cols.length; ri++) {
+          const leftCards = cols[ri - 1].querySelectorAll('.bracket-match');
+          const cards = cols[ri].querySelectorAll('.bracket-match');
+          const container = cols[ri].querySelector('.bracket-matches');
+          if (!container || cards.length === 0) continue;
+          const containerRect = container.getBoundingClientRect();
+
+          cards.forEach((card, mi) => {
+            const topFeeder = leftCards[mi * 2];
+            const botFeeder = leftCards[mi * 2 + 1];
+            if (!topFeeder || !botFeeder) return;
+
+            card.style.position = 'absolute';
+            card.style.left = '0';
+            card.style.right = '0';
+
+            const topRect = topFeeder.getBoundingClientRect();
+            const botRect = botFeeder.getBoundingClientRect();
+            const cardRect = card.getBoundingClientRect();
+
+            const pairCenter = (topRect.top + botRect.bottom) / 2;
+            const targetTop = pairCenter - containerRect.top - cardRect.height / 2;
+            card.style.top = targetTop + 'px';
+          });
+        }
+
+        const gaps = wrapper.querySelectorAll('.bracket-gap');
+        gaps.forEach((gap, gi) => {
+          const leftCol = cols[gi];
+          if (!leftCol) return;
+          const leftCards = leftCol.querySelectorAll('.bracket-match');
+          const pairs = Math.floor(leftCards.length / 2);
+          const gapRect = gap.getBoundingClientRect();
+
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('width', '100%');
+          svg.setAttribute('height', '100%');
+          svg.style.position = 'absolute';
+          svg.style.inset = '0';
+          svg.style.overflow = 'visible';
+          svg.style.pointerEvents = 'none';
+
+          for (let p = 0; p < pairs; p++) {
+            const topCard = leftCards[p * 2];
+            const botCard = leftCards[p * 2 + 1];
+            if (!topCard || !botCard) continue;
+            const topRect = topCard.getBoundingClientRect();
+            const botRect = botCard.getBoundingClientRect();
+
+            const topCenter = topRect.top + topRect.height / 2 - gapRect.top;
+            const botCenter = botRect.top + botRect.height / 2 - gapRect.top;
+            const midY = (topCenter + botCenter) / 2;
+
+            const makeLine = (x1, y1, x2, y2) => {
+              const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+              l.setAttribute('x1', x1.toString());
+              l.setAttribute('y1', y1.toString());
+              l.setAttribute('x2', x2.toString());
+              l.setAttribute('y2', y2.toString());
+              l.setAttribute('stroke', lineColor);
+              l.setAttribute('stroke-width', '2');
+              l.setAttribute('opacity', '0.35');
+              return l;
+            };
+            svg.appendChild(makeLine('0', topCenter, '50%', topCenter));
+            svg.appendChild(makeLine('0', botCenter, '50%', botCenter));
+            svg.appendChild(makeLine('50%', topCenter, '50%', botCenter));
+            svg.appendChild(makeLine('50%', midY, '100%', midY));
+          }
+          if (svg.childNodes.length > 0) gap.appendChild(svg);
+        });
+      });
     }
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      localStorage.removeItem(BRACKET_SEED_KEY);
+      renderGroups();
+      renderBracket();
+    });
 
     renderGroups();
     renderBracket();
