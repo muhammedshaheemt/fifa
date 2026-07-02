@@ -34,8 +34,7 @@
     </div>
 
     <div id="knockouts-view" class="tab-content">
-      <h2 class="section-heading">Knockout Stage</h2>
-      <div class="bracket" id="bracket"></div>
+      <div id="bracket"></div>
     </div>
   </div>
 
@@ -54,10 +53,10 @@
 
     const flags = {
       'Mexico':'mx','South Africa':'za','South Korea':'kr','Czechia':'cz',
-      'Switzerland':'ch','Canada':'ca','Bosnia & H.':'ba','Qatar':'qa',
+      'Switzerland':'ch','Canada':'ca','Bosnia and Herzegovina':'ba','Qatar':'qa',
       'Brazil':'br','Morocco':'ma','Scotland':'gb-sct','Haiti':'ht',
-      'USA':'us','Australia':'au','Paraguay':'py','Türkiye':'tr',
-      'Germany':'de',"Côte d'Ivoire":'ci','Ecuador':'ec','Curaçao':'cw',
+      'United States':'us','Australia':'au','Paraguay':'py','Türkiye':'tr',
+      'Germany':'de','Ivory Coast':'ci','Ecuador':'ec','Curaçao':'cw',
       'Netherlands':'nl','Japan':'jp','Sweden':'se','Tunisia':'tn',
       'Egypt':'eg','Iran':'ir','Belgium':'be','New Zealand':'nz',
       'Spain':'es','Uruguay':'uy','Cape Verde':'cv','Saudi Arabia':'sa',
@@ -94,12 +93,12 @@
         { mid: 'a-5', h: 'South Africa', a: 'South Korea', hs: 1, as: 0 },
       ],
       b: [
-        { mid: 'b-0', h: 'Canada', a: 'Bosnia & H.', hs: 1, as: 1 },
+        { mid: 'b-0', h: 'Canada', a: 'Bosnia and Herzegovina', hs: 1, as: 1 },
         { mid: 'b-1', h: 'Switzerland', a: 'Qatar', hs: 1, as: 1 },
-        { mid: 'b-2', h: 'Switzerland', a: 'Bosnia & H.', hs: 4, as: 1 },
+        { mid: 'b-2', h: 'Switzerland', a: 'Bosnia and Herzegovina', hs: 4, as: 1 },
         { mid: 'b-3', h: 'Canada', a: 'Qatar', hs: 6, as: 0 },
         { mid: 'b-4', h: 'Switzerland', a: 'Canada', hs: 3, as: 1 },
-        { mid: 'b-5', h: 'Bosnia & H.', a: 'Qatar', hs: 3, as: 1 },
+        { mid: 'b-5', h: 'Bosnia and Herzegovina', a: 'Qatar', hs: 3, as: 1 },
       ],
       c: [
         { mid: 'c-0', h: 'Brazil', a: 'Morocco', hs: 1, as: 1 },
@@ -110,19 +109,18 @@
         { mid: 'c-5', h: 'Morocco', a: 'Haiti', hs: 4, as: 2 },
       ],
       d: [
-        { mid: 'd-0', h: 'USA', a: 'Paraguay', hs: 4, as: 1 },
+        { mid: 'd-0', h: 'United States', a: 'Paraguay', hs: 4, as: 1 },
         { mid: 'd-1', h: 'Australia', a: 'Türkiye', hs: 2, as: 0 },
-        { mid: 'd-2', h: 'USA', a: 'Australia', hs: 2, as: 0 },
+        { mid: 'd-2', h: 'United States', a: 'Australia', hs: 2, as: 0 },
         { mid: 'd-3', h: 'Türkiye', a: 'Paraguay', hs: 0, as: 1 },
-        { mid: 'd-4', h: 'Türkiye', a: 'USA', hs: 3, as: 2 },
+        { mid: 'd-4', h: 'Türkiye', a: 'United States', hs: 3, as: 2 },
         { mid: 'd-5', h: 'Paraguay', a: 'Australia', hs: 0, as: 0 },
       ],
       e: [
         { mid: 'e-0', h: 'Germany', a: 'Curaçao', hs: 7, as: 1 },
-        { mid: 'e-1', h: "Côte d'Ivoire", a: 'Ecuador', hs: 1, as: 0 },
-        { mid: 'e-2', h: 'Germany', a: "Côte d'Ivoire", hs: 2, as: 1 },
-        { mid: 'e-3', h: 'Ecuador', a: 'Curaçao', hs: 0, as: 0 },
-        { mid: 'e-4', h: 'Curaçao', a: "Côte d'Ivoire", hs: 0, as: 2 },
+{ mid: 'e-1', h: 'Ivory Coast', a: 'Ecuador', hs: 1, as: 0 },
+        { mid: 'e-2', h: 'Germany', a: 'Ivory Coast', hs: 2, as: 1 },
+        { mid: 'e-4', h: 'Curaçao', a: 'Ivory Coast', hs: 0, as: 2 },
         { mid: 'e-5', h: 'Ecuador', a: 'Germany', hs: 2, as: 1 },
       ],
       f: [
@@ -214,23 +212,25 @@
       const as = p ? p.a : m.as;
       const fc = flags[m.h] || 'xx';
       const ac = flags[m.a] || 'xx';
+      const isFT = m.hs !== '' && m.hs !== undefined && m.as !== '' && m.as !== undefined;
+      const disabled = isFT ? ' disabled' : '';
       return `
         <div class="fixture-item" data-mid="${m.mid}">
           <div class="fixture-left">
-            <span class="ft-tag">FT</span>
+            ${isFT ? '<span class="ft-tag">FT</span>' : ''}
             <span class="fixture-team"><img src="${flagUrl(fc)}" alt="" class="fixture-flag"> ${m.h}</span>
           </div>
           <div class="score-group">
             <div class="score-picker">
-              <button class="scr-btn" data-action="dec" data-side="h">−</button>
+              <button class="scr-btn" data-action="dec" data-side="h"${disabled}>−</button>
               <span class="score" data-side="h">${hs}</span>
-              <button class="scr-btn" data-action="inc" data-side="h">+</button>
+              <button class="scr-btn" data-action="inc" data-side="h"${disabled}>+</button>
             </div>
             <span class="vs">v</span>
             <div class="score-picker">
-              <button class="scr-btn" data-action="dec" data-side="a">−</button>
+              <button class="scr-btn" data-action="dec" data-side="a"${disabled}>−</button>
               <span class="score" data-side="a">${as}</span>
-              <button class="scr-btn" data-action="inc" data-side="a">+</button>
+              <button class="scr-btn" data-action="inc" data-side="a"${disabled}>+</button>
             </div>
           </div>
           <div class="fixture-right">
@@ -244,7 +244,7 @@
       document.querySelectorAll('.fixture-item[data-mid]').forEach((item) => {
         item.addEventListener('click', (e) => {
           const btn = e.target.closest('.scr-btn');
-          if (!btn) return;
+          if (!btn || btn.disabled) return;
           const side = btn.dataset.side;
           const scoreEl = item.querySelector(`.score[data-side="${side}"]`);
           let val = parseInt(scoreEl.textContent, 10);
@@ -325,10 +325,10 @@
         { h: 'Netherlands', hs: '1', a: 'Morocco', as: '1', note: '2-3 pens' }, // 75 → R16[1].a
         { h: 'Portugal', hs: '', a: 'Croatia', as: '' },                        // 83 → R16[2].h
         { h: 'Spain', hs: '', a: 'Austria', as: '' },                           // 84 → R16[2].a
-        { h: 'USA', hs: '2', a: 'Bosnia & H.', as: '0' },                      // 81 → R16[3].h
+        { h: 'United States', hs: '2', a: 'Bosnia and Herzegovina', as: '0' },           // 81 → R16[3].h
         { h: 'Belgium', hs: '3', a: 'Senegal', as: '2' },                       // 82 → R16[3].a
         { h: 'Brazil', hs: '2', a: 'Japan', as: '1' },                          // 76 → R16[4].h
-        { h: 'Norway', hs: '2', a: "Côte d'Ivoire", as: '1' },                 // 78 → R16[4].a
+        { h: 'Norway', hs: '2', a: 'Ivory Coast', as: '1' },                      // 78 → R16[4].a
         { h: 'Mexico', hs: '2', a: 'Ecuador', as: '0' },                        // 79 → R16[5].h
         { h: 'England', hs: '2', a: 'DR Congo', as: '1' },                      // 80 → R16[5].a
         { h: 'Argentina', hs: '', a: 'Cape Verde', as: '' },                    // 86 → R16[6].h
@@ -337,27 +337,27 @@
         { h: 'Colombia', hs: '', a: 'Ghana', as: '' },                          // 87 → R16[7].a
       ],
       r16: [
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 89: winner 74 vs winner 77
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 90: winner 73 vs winner 75
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 93: winner 83 vs winner 84
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 94: winner 81 vs winner 82
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 91: winner 76 vs winner 78
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 92: winner 79 vs winner 80
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 95: winner 86 vs winner 88
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 96: winner 85 vs winner 87
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },  // 89
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },  // 90
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },  // 93
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },  // 94
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },  // 91
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },  // 92
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },  // 95
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },  // 96
       ],
       qf: [
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 97: winner 89 vs winner 90
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 98: winner 93 vs winner 94
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 99: winner 91 vs winner 92
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 100: winner 95 vs winner 96
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },   // 97
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },   // 98
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },   // 99
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },   // 100
       ],
       sf: [
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 101: winner 97 vs winner 98
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // 102: winner 99 vs winner 100
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },   // 101
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },   // 102
       ],
       fn: [
-        { h: 'TBD', hs: '', a: 'TBD', as: '' },                 // Final: winner 101 vs winner 102
+        { h: 'Winner TBD', hs: '', a: 'Winner TBD', as: '' },   // Final
       ],
     };
 
@@ -413,11 +413,28 @@
         r[curr].forEach((m, mi) => {
           const t = r[prev][mi * 2];
           const b = r[prev][mi * 2 + 1];
-          if (t) m.h = getWinner(prev, mi * 2, seeds, true) || 'TBD';
-          if (b) m.a = getWinner(prev, mi * 2 + 1, seeds, true) || 'TBD';
+          if (t) m.h = getWinner(prev, mi * 2, seeds, true) || 'Winner TBD';
+          if (b) m.a = getWinner(prev, mi * 2 + 1, seeds, true) || 'Winner TBD';
         });
       }
       return r;
+    }
+
+    function flagUrlBracket(code) {
+      if (code === 'gb-sct') return 'https://flagcdn.com/24x18/gb-sct.png';
+      if (code === 'gb-eng') return 'https://flagcdn.com/24x18/gb-eng.png';
+      return `https://flagcdn.com/24x18/${code}.png`;
+    }
+
+    function bracketTeamHTML(name, side, pick, seeds, resolved, roundId, mi) {
+      const known = name !== 'Winner TBD' && flags[name];
+      const picked = pick === name;
+      const cls = 'b-team' + (side === 'h' ? ' top' : ' bottom') + (picked ? ' picked' : '') + (known ? ' sel' : '');
+      const fc = known ? flags[name] : null;
+      return `<button type="button" class="${cls}" data-rid="${roundId}" data-midx="${mi}" data-side="${side}">` +
+        (fc ? `<img src="${flagUrlBracket(fc)}" alt="" class="b-flag">` : '<span class="b-flag ph"></span>') +
+        `<span class="b-name${known ? '' : ' unk'}">${name}</span>` +
+        '</button>';
     }
 
     function renderBracket() {
@@ -426,164 +443,118 @@
       const bracket = document.getElementById('bracket');
       bracket.innerHTML = '';
 
-      const wrapper = document.createElement('div');
-      wrapper.className = 'bracket-inner';
+      // Description card
+      const desc = document.createElement('div');
+      desc.className = 'b-desc';
+      desc.innerHTML = '<h2 class="b-desc-h">Knockout Bracket</h2>' +
+        '<p class="b-desc-p">Tap a team in any tie to send them through — winners flow automatically into the next round.</p>';
+      bracket.appendChild(desc);
+
+      // Bracket scroll
+      const scroll = document.createElement('div');
+      scroll.className = 'b-scroll';
+
+      const inner = document.createElement('div');
+      inner.className = 'b-inner';
 
       roundMeta.forEach((round, ri) => {
         const col = document.createElement('div');
-        col.className = 'bracket-col';
+        col.className = 'b-col';
 
         const label = document.createElement('div');
-        label.className = 'bracket-round-label';
+        label.className = 'b-label';
         label.textContent = round.label;
         col.appendChild(label);
 
         const matchList = document.createElement('div');
-        matchList.className = 'bracket-matches';
+        matchList.className = 'b-matches';
         const matches = resolved[round.id];
 
         matches.forEach((m, mi) => {
-          const card = document.createElement('div');
-          card.className = 'bracket-match';
-          card.dataset.round = round.id;
-          card.dataset.midx = mi;
-
           const seed = seeds[round.id + '-' + mi];
-          const hPick = seed === m.h;
-          const aPick = seed === m.a;
-          const isTbd = m.h === 'TBD' || m.a === 'TBD';
-          const hClass = 'match-team' + (hPick ? ' winner picked' : '') + (!isTbd ? ' selectable' : '');
-          const aClass = 'match-team' + (aPick ? ' winner picked' : '') + (!isTbd ? ' selectable' : '');
+          const knownH = m.h !== 'Winner TBD' && flags[m.h];
+          const knownA = m.a !== 'Winner TBD' && flags[m.a];
 
-          const hFlagCode = flags[m.h] || null;
-          const aFlagCode = flags[m.a] || null;
+          const row = document.createElement('div');
+          row.className = 'b-row';
+          if (ri > 0) row.appendChild(document.createElement('span')).className = 'b-conn left';
+          if (ri < roundMeta.length - 1) row.appendChild(document.createElement('span')).className = 'b-conn right';
+          if (ri < roundMeta.length - 1 && mi % 2 === 0) row.appendChild(document.createElement('span')).className = 'b-conn vert';
 
-          card.innerHTML = `
-            <div class="match-card">
-              <div class="${hClass}" data-side="h">
-                ${hFlagCode ? '<img src="' + flagUrl(hFlagCode) + '" alt="" class="bracket-flag">' : '<span class="bracket-flag placeholder"></span>'}
-                <span class="team-name">${m.h}</span>
-                <span class="team-score">${m.hs !== '' && m.hs !== undefined ? m.hs : '-'}</span>
-              </div>
-              <div class="${aClass}" data-side="a">
-                ${aFlagCode ? '<img src="' + flagUrl(aFlagCode) + '" alt="" class="bracket-flag">' : '<span class="bracket-flag placeholder"></span>'}
-                <span class="team-name">${m.a}</span>
-                <span class="team-score">${m.as !== '' && m.as !== undefined ? m.as : '-'}</span>
-              </div>
-              ${m.note ? '<div class="match-note">' + m.note + '</div>' : ''}
-            </div>
-          `;
-          matchList.appendChild(card);
+          const card = document.createElement('div');
+          card.className = 'b-card';
+
+          card.innerHTML =
+            bracketTeamHTML(m.h, 'h', seed, seeds, resolved, round.id, mi) +
+            bracketTeamHTML(m.a, 'a', seed, seeds, resolved, round.id, mi);
+
+          row.appendChild(card);
+          matchList.appendChild(row);
         });
 
         col.appendChild(matchList);
-        wrapper.appendChild(col);
-
-        if (ri < roundMeta.length - 1) {
-          const gap = document.createElement('div');
-          gap.className = 'bracket-gap';
-          wrapper.appendChild(gap);
-        }
+        inner.appendChild(col);
       });
 
-      bracket.appendChild(wrapper);
+      // Champion column
+      const champCol = document.createElement('div');
+      champCol.className = 'b-col champ';
+      const champLabel = document.createElement('div');
+      champLabel.className = 'b-label';
+      champLabel.textContent = 'Champion';
+      champCol.appendChild(champLabel);
+      const champWrap = document.createElement('div');
+      champWrap.className = 'b-champ-wrap';
+      const champRel = document.createElement('div');
+      champRel.className = 'b-champ-rel';
 
-      bracket.querySelectorAll('.match-team.selectable').forEach(el => {
-        el.addEventListener('click', () => {
-          const card = el.closest('.bracket-match');
-          const rid = card.dataset.round;
-          const mi = parseInt(card.dataset.midx);
-          const side = el.dataset.side;
+      // Connector from final to champion
+      const champConn = document.createElement('span');
+      champConn.className = 'b-conn left';
+      champRel.appendChild(champConn);
+
+      const champInner = document.createElement('div');
+      champInner.className = 'b-champ';
+
+      // Trophy SVG
+      champInner.innerHTML = '<svg class="b-trophy" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
+
+      // Find champion from final
+      const fnMatch = resolved.fn[0];
+      const champSeed = seeds['fn-0'];
+      const champ = champSeed === fnMatch.h ? fnMatch.h : champSeed === fnMatch.a ? fnMatch.a : null;
+      const champKnown = champ && flags[champ];
+
+      if (champ && champKnown) {
+        champInner.innerHTML +=
+          `<img src="${flagUrlBracket(flags[champ])}" alt="" class="b-champ-flag">` +
+          `<span class="b-champ-name">${champ}</span>`;
+      } else {
+        champInner.innerHTML += '<span class="b-champ-name unk">Pick the final to crown a winner</span>';
+      }
+      champRel.appendChild(champInner);
+      champWrap.appendChild(champRel);
+      champCol.appendChild(champWrap);
+      inner.appendChild(champCol);
+
+      scroll.appendChild(inner);
+      bracket.appendChild(scroll);
+
+      // Event listeners for team buttons
+      bracket.querySelectorAll('.b-team.sel').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const rid = btn.dataset.rid;
+          const mi = parseInt(btn.dataset.midx);
+          const side = btn.dataset.side;
           const match = resolved[rid][mi];
           const team = side === 'h' ? match.h : match.a;
           const s = loadSeeds();
           const key = rid + '-' + mi;
-          if (s[key] === team) {
-            delete s[key];
-          } else {
-            s[key] = team;
-          }
+          if (s[key] === team) delete s[key];
+          else s[key] = team;
           clearDownstream(s, rid, mi);
           saveSeeds(s);
           renderBracket();
-        });
-      });
-
-      requestAnimationFrame(() => {
-        const cols = wrapper.querySelectorAll('.bracket-col');
-
-        const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--connector').trim() || 'oklch(60% 0.14 150)';
-
-        for (let ri = 1; ri < cols.length; ri++) {
-          const leftCards = cols[ri - 1].querySelectorAll('.bracket-match');
-          const cards = cols[ri].querySelectorAll('.bracket-match');
-          const container = cols[ri].querySelector('.bracket-matches');
-          if (!container || cards.length === 0) continue;
-          const containerRect = container.getBoundingClientRect();
-
-          cards.forEach((card, mi) => {
-            const topFeeder = leftCards[mi * 2];
-            const botFeeder = leftCards[mi * 2 + 1];
-            if (!topFeeder || !botFeeder) return;
-
-            card.style.position = 'absolute';
-            card.style.left = '0';
-            card.style.right = '0';
-
-            const topRect = topFeeder.getBoundingClientRect();
-            const botRect = botFeeder.getBoundingClientRect();
-            const cardRect = card.getBoundingClientRect();
-
-            const pairCenter = (topRect.top + botRect.bottom) / 2;
-            const targetTop = pairCenter - containerRect.top - cardRect.height / 2;
-            card.style.top = targetTop + 'px';
-          });
-        }
-
-        const gaps = wrapper.querySelectorAll('.bracket-gap');
-        gaps.forEach((gap, gi) => {
-          const leftCol = cols[gi];
-          if (!leftCol) return;
-          const leftCards = leftCol.querySelectorAll('.bracket-match');
-          const pairs = Math.floor(leftCards.length / 2);
-          const gapRect = gap.getBoundingClientRect();
-
-          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-          svg.setAttribute('width', '100%');
-          svg.setAttribute('height', '100%');
-          svg.style.position = 'absolute';
-          svg.style.inset = '0';
-          svg.style.overflow = 'visible';
-          svg.style.pointerEvents = 'none';
-
-          for (let p = 0; p < pairs; p++) {
-            const topCard = leftCards[p * 2];
-            const botCard = leftCards[p * 2 + 1];
-            if (!topCard || !botCard) continue;
-            const topRect = topCard.getBoundingClientRect();
-            const botRect = botCard.getBoundingClientRect();
-
-            const topCenter = topRect.top + topRect.height / 2 - gapRect.top;
-            const botCenter = botRect.top + botRect.height / 2 - gapRect.top;
-            const midY = (topCenter + botCenter) / 2;
-
-            const makeLine = (x1, y1, x2, y2) => {
-              const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-              l.setAttribute('x1', x1.toString());
-              l.setAttribute('y1', y1.toString());
-              l.setAttribute('x2', x2.toString());
-              l.setAttribute('y2', y2.toString());
-              l.setAttribute('stroke', lineColor);
-              l.setAttribute('stroke-width', '2');
-              l.setAttribute('opacity', '0.35');
-              return l;
-            };
-            svg.appendChild(makeLine('0', topCenter, '50%', topCenter));
-            svg.appendChild(makeLine('0', botCenter, '50%', botCenter));
-            svg.appendChild(makeLine('50%', topCenter, '50%', botCenter));
-            svg.appendChild(makeLine('50%', midY, '100%', midY));
-          }
-          if (svg.childNodes.length > 0) gap.appendChild(svg);
         });
       });
     }
@@ -602,7 +573,11 @@
         document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
         tab.classList.add('active');
-        document.getElementById(tab.dataset.tab + '-view').classList.add('active');
+        const view = document.getElementById(tab.dataset.tab + '-view');
+        view.classList.add('active');
+        if (tab.dataset.tab === 'knockouts') {
+          view.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       });
     });
   </script>
