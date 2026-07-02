@@ -1,268 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WORLD CUP 2026</title>
+  <title>World Cup 2026 Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
     <header class="header">
-      <h1>FIFA WORLD CUP 2026</h1>
-      <p>Scores updated <span id="live-time">--:--</span></p>
-
+      <h1 class="header-title">FIFA WORLD CUP 2026</h1>
+      <p class="header-sub">Scores updated <span id="live-time">--:--</span></p>
     </header>
 
-    <section class="section" id="groups-view">
-      <div class="section-title">
-        <h2>Groups</h2>
-      </div>
-      <div class="group-grid">
+    <div class="tabs">
+      <button class="tab active" data-tab="groups">Groups</button>
+      <button class="tab" data-tab="knockouts">Knockouts</button>
+    </div>
 
-        <div class="group-card">
-          <h3>Group A <span class="badge">Complete</span></h3>
-          <div class="standings" data-group="a"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>Mexico 2-0 South Africa</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>South Korea 2-1 Czechia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Czechia 1-1 South Africa</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Mexico 1-0 South Korea</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Mexico 3-0 Czechia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>South Africa 1-0 South Korea</span><span class="ft-tag">FT</span></div>
-          </div>
-        </div>
+    <div id="groups-view" class="tab-content active">
+      <div class="group-grid" id="group-grid"></div>
+    </div>
 
-        <div class="group-card">
-          <h3>Group B <span class="badge">Complete</span></h3>
-          <div class="standings" data-group="b"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>Canada 1-1 Bosnia &amp; H.</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Switzerland 1-1 Qatar</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Switzerland 4-1 Bosnia &amp; H.</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Canada 6-0 Qatar</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Switzerland 3-1 Canada</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Bosnia &amp; H. 3-1 Qatar</span><span class="ft-tag">FT</span></div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group C <span class="badge">Complete</span></h3>
-          <div class="standings" data-group="c"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>Brazil 1-1 Morocco</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Scotland 1-0 Haiti</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Scotland 0-1 Morocco</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Brazil 3-0 Haiti</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Scotland 0-3 Brazil</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Morocco 4-2 Haiti</span><span class="ft-tag">FT</span></div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group D <span class="badge">Complete</span></h3>
-          <div class="standings" data-group="d"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>USA 4-1 Paraguay</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Australia 2-0 Türkiye</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>USA 2-0 Australia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Türkiye 0-1 Paraguay</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Türkiye 3-2 USA</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Paraguay 0-0 Australia</span><span class="ft-tag">FT</span></div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group E <span class="badge">Complete</span></h3>
-          <div class="standings" data-group="e"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>Germany 7-1 Curaçao</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Côte d'Ivoire 1-0 Ecuador</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Germany 2-1 Côte d'Ivoire</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Ecuador 0-0 Curaçao</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Curaçao 0-2 Côte d'Ivoire</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Ecuador 2-1 Germany</span><span class="ft-tag">FT</span></div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group F <span class="badge">Complete</span></h3>
-          <div class="standings" data-group="f"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>Netherlands 2-2 Japan</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Sweden 5-1 Tunisia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Netherlands 5-0 Sweden</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Japan 4-0 Tunisia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Japan 1-1 Sweden</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Netherlands 3-1 Tunisia</span><span class="ft-tag">FT</span></div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group G <span class="badge">Complete</span></h3>
-          <div class="standings" data-group="g"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>Belgium 1-1 Egypt</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Iran 2-2 New Zealand</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Belgium 0-0 Iran</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Egypt 3-1 New Zealand</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Egypt 1-1 Iran</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>New Zealand 1-5 Belgium</span><span class="ft-tag">FT</span></div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group H <span class="badge">Complete</span></h3>
-          <div class="standings" data-group="h"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>Spain 0-0 Cape Verde</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Saudi Arabia 1-1 Uruguay</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Spain 4-0 Saudi Arabia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Uruguay 2-2 Cape Verde</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Cape Verde 0-0 Saudi Arabia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Uruguay 0-1 Spain</span><span class="ft-tag">FT</span></div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group I <span class="badge">Complete</span></h3>
-          <div class="standings" data-group="i"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>France 3-1 Senegal</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Norway 4-1 Iraq</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>France 3-0 Iraq</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Norway 3-2 Senegal</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Norway 1-4 France</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Senegal 5-0 Iraq</span><span class="ft-tag">FT</span></div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group J <span class="badge warn">In Progress</span></h3>
-          <div class="standings" data-group="j"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>Argentina 3-0 Algeria</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Austria 3-1 Jordan</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Argentina 2-0 Austria</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Jordan 1-2 Algeria</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item predict" data-match="j-jor-arg">
-              <span>Jordan</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="h">-</button>
-                <span class="score" data-side="h">0</span>
-                <button class="scr-btn" data-action="inc" data-side="h">+</button>
-              </div>
-              <span class="vs">vs</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="a">-</button>
-                <span class="score" data-side="a">0</span>
-                <button class="scr-btn" data-action="inc" data-side="a">+</button>
-              </div>
-              <span>Argentina</span>
-            </div>
-            <div class="fixture-item predict" data-match="j-alg-aut">
-              <span>Algeria</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="h">-</button>
-                <span class="score" data-side="h">0</span>
-                <button class="scr-btn" data-action="inc" data-side="h">+</button>
-              </div>
-              <span class="vs">vs</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="a">-</button>
-                <span class="score" data-side="a">0</span>
-                <button class="scr-btn" data-action="inc" data-side="a">+</button>
-              </div>
-              <span>Austria</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group K <span class="badge warn">In Progress</span></h3>
-          <div class="standings" data-group="k"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>Portugal 1-1 DR Congo</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Uzbekistan 1-3 Colombia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Portugal 5-0 Uzbekistan</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Colombia 1-0 DR Congo</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item predict" data-match="k-col-por">
-              <span>Colombia</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="h">-</button>
-                <span class="score" data-side="h">0</span>
-                <button class="scr-btn" data-action="inc" data-side="h">+</button>
-              </div>
-              <span class="vs">vs</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="a">-</button>
-                <span class="score" data-side="a">0</span>
-                <button class="scr-btn" data-action="inc" data-side="a">+</button>
-              </div>
-              <span>Portugal</span>
-            </div>
-            <div class="fixture-item predict" data-match="k-drc-uzb">
-              <span>DR Congo</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="h">-</button>
-                <span class="score" data-side="h">0</span>
-                <button class="scr-btn" data-action="inc" data-side="h">+</button>
-              </div>
-              <span class="vs">vs</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="a">-</button>
-                <span class="score" data-side="a">0</span>
-                <button class="scr-btn" data-action="inc" data-side="a">+</button>
-              </div>
-              <span>Uzbekistan</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="group-card">
-          <h3>Group L <span class="badge warn">In Progress</span></h3>
-          <div class="standings" data-group="l"></div>
-          <div class="fixture-list">
-            <div class="fixture-item"><span>England 4-2 Croatia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Ghana 1-0 Panama</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>England 0-0 Ghana</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item"><span>Panama 0-1 Croatia</span><span class="ft-tag">FT</span></div>
-            <div class="fixture-item predict" data-match="l-pan-eng">
-              <span>Panama</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="h">-</button>
-                <span class="score" data-side="h">0</span>
-                <button class="scr-btn" data-action="inc" data-side="h">+</button>
-              </div>
-              <span class="vs">vs</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="a">-</button>
-                <span class="score" data-side="a">0</span>
-                <button class="scr-btn" data-action="inc" data-side="a">+</button>
-              </div>
-              <span>England</span>
-            </div>
-            <div class="fixture-item predict" data-match="l-cro-gha">
-              <span>Croatia</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="h">-</button>
-                <span class="score" data-side="h">0</span>
-                <button class="scr-btn" data-action="inc" data-side="h">+</button>
-              </div>
-              <span class="vs">vs</span>
-              <div class="score-picker">
-                <button class="scr-btn" data-action="dec" data-side="a">-</button>
-                <span class="score" data-side="a">0</span>
-                <button class="scr-btn" data-action="inc" data-side="a">+</button>
-              </div>
-              <span>Ghana</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
+    <div id="knockouts-view" class="tab-content">
+      <div class="bracket" id="bracket"></div>
+    </div>
   </div>
 
   <script>
@@ -272,7 +37,7 @@
       liveTime.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    const STORAGE_KEY = 'wc26_predictions';
+    const completedGroups = new Set('abcdefghi'.split(''));
 
     const flags = {
       'Mexico':'mx','South Africa':'za','South Korea':'kr','Czechia':'cz',
@@ -287,114 +52,8 @@
       'Argentina':'ar','Algeria':'dz','Austria':'at','Jordan':'jo',
       'Colombia':'co','Portugal':'pt','DR Congo':'cd','Uzbekistan':'uz',
       'England':'gb-eng','Ghana':'gh','Croatia':'hr','Panama':'pa',
-    };
-
-    function loadPredictions() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
-      catch { return {}; }
-    }
-
-    function savePredictions(preds) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(preds));
-    }
-
-    const groupMatches = {
-      a: [
-        { h: 'Mexico', a: 'South Africa', hs: 2, as: 0 },
-        { h: 'South Korea', a: 'Czechia', hs: 2, as: 1 },
-        { h: 'Czechia', a: 'South Africa', hs: 1, as: 1 },
-        { h: 'Mexico', a: 'South Korea', hs: 1, as: 0 },
-        { h: 'Mexico', a: 'Czechia', hs: 3, as: 0 },
-        { h: 'South Africa', a: 'South Korea', hs: 1, as: 0 },
-      ],
-      b: [
-        { h: 'Canada', a: 'Bosnia & H.', hs: 1, as: 1 },
-        { h: 'Switzerland', a: 'Qatar', hs: 1, as: 1 },
-        { h: 'Switzerland', a: 'Bosnia & H.', hs: 4, as: 1 },
-        { h: 'Canada', a: 'Qatar', hs: 6, as: 0 },
-        { h: 'Switzerland', a: 'Canada', hs: 3, as: 1 },
-        { h: 'Bosnia & H.', a: 'Qatar', hs: 3, as: 1 },
-      ],
-      c: [
-        { h: 'Brazil', a: 'Morocco', hs: 1, as: 1 },
-        { h: 'Scotland', a: 'Haiti', hs: 1, as: 0 },
-        { h: 'Scotland', a: 'Morocco', hs: 0, as: 1 },
-        { h: 'Brazil', a: 'Haiti', hs: 3, as: 0 },
-        { h: 'Scotland', a: 'Brazil', hs: 0, as: 3 },
-        { h: 'Morocco', a: 'Haiti', hs: 4, as: 2 },
-      ],
-      d: [
-        { h: 'USA', a: 'Paraguay', hs: 4, as: 1 },
-        { h: 'Australia', a: 'Türkiye', hs: 2, as: 0 },
-        { h: 'USA', a: 'Australia', hs: 2, as: 0 },
-        { h: 'Türkiye', a: 'Paraguay', hs: 0, as: 1 },
-        { h: 'Türkiye', a: 'USA', hs: 3, as: 2 },
-        { h: 'Paraguay', a: 'Australia', hs: 0, as: 0 },
-      ],
-      e: [
-        { h: 'Germany', a: 'Curaçao', hs: 7, as: 1 },
-        { h: "Côte d'Ivoire", a: 'Ecuador', hs: 1, as: 0 },
-        { h: 'Germany', a: "Côte d'Ivoire", hs: 2, as: 1 },
-        { h: 'Ecuador', a: 'Curaçao', hs: 0, as: 0 },
-        { h: 'Curaçao', a: "Côte d'Ivoire", hs: 0, as: 2 },
-        { h: 'Ecuador', a: 'Germany', hs: 2, as: 1 },
-      ],
-      f: [
-        { h: 'Netherlands', a: 'Japan', hs: 2, as: 2 },
-        { h: 'Sweden', a: 'Tunisia', hs: 5, as: 1 },
-        { h: 'Netherlands', a: 'Sweden', hs: 5, as: 0 },
-        { h: 'Japan', a: 'Tunisia', hs: 4, as: 0 },
-        { h: 'Japan', a: 'Sweden', hs: 1, as: 1 },
-        { h: 'Netherlands', a: 'Tunisia', hs: 3, as: 1 },
-      ],
-      g: [
-        { h: 'Belgium', a: 'Egypt', hs: 1, as: 1 },
-        { h: 'Iran', a: 'New Zealand', hs: 2, as: 2 },
-        { h: 'Belgium', a: 'Iran', hs: 0, as: 0 },
-        { h: 'Egypt', a: 'New Zealand', hs: 3, as: 1 },
-        { h: 'Egypt', a: 'Iran', hs: 1, as: 1 },
-        { h: 'New Zealand', a: 'Belgium', hs: 1, as: 5 },
-      ],
-      h: [
-        { h: 'Spain', a: 'Cape Verde', hs: 0, as: 0 },
-        { h: 'Saudi Arabia', a: 'Uruguay', hs: 1, as: 1 },
-        { h: 'Spain', a: 'Saudi Arabia', hs: 4, as: 0 },
-        { h: 'Uruguay', a: 'Cape Verde', hs: 2, as: 2 },
-        { h: 'Cape Verde', a: 'Saudi Arabia', hs: 0, as: 0 },
-        { h: 'Uruguay', a: 'Spain', hs: 0, as: 1 },
-      ],
-      i: [
-        { h: 'France', a: 'Senegal', hs: 3, as: 1 },
-        { h: 'Norway', a: 'Iraq', hs: 4, as: 1 },
-        { h: 'France', a: 'Iraq', hs: 3, as: 0 },
-        { h: 'Norway', a: 'Senegal', hs: 3, as: 2 },
-        { h: 'Norway', a: 'France', hs: 1, as: 4 },
-        { h: 'Senegal', a: 'Iraq', hs: 5, as: 0 },
-      ],
-      j: [
-        { h: 'Argentina', a: 'Algeria', hs: 3, as: 0 },
-        { h: 'Austria', a: 'Jordan', hs: 3, as: 1 },
-        { h: 'Argentina', a: 'Austria', hs: 2, as: 0 },
-        { h: 'Jordan', a: 'Algeria', hs: 1, as: 2 },
-        { h: 'Jordan', a: 'Argentina', pred: 'j-jor-arg' },
-        { h: 'Algeria', a: 'Austria', pred: 'j-alg-aut' },
-      ],
-      k: [
-        { h: 'Portugal', a: 'DR Congo', hs: 1, as: 1 },
-        { h: 'Uzbekistan', a: 'Colombia', hs: 1, as: 3 },
-        { h: 'Portugal', a: 'Uzbekistan', hs: 5, as: 0 },
-        { h: 'Colombia', a: 'DR Congo', hs: 1, as: 0 },
-        { h: 'Colombia', a: 'Portugal', pred: 'k-col-por' },
-        { h: 'DR Congo', a: 'Uzbekistan', pred: 'k-drc-uzb' },
-      ],
-      l: [
-        { h: 'England', a: 'Croatia', hs: 4, as: 2 },
-        { h: 'Ghana', a: 'Panama', hs: 1, as: 0 },
-        { h: 'England', a: 'Ghana', hs: 0, as: 0 },
-        { h: 'Panama', a: 'Croatia', hs: 0, as: 1 },
-        { h: 'Panama', a: 'England', pred: 'l-pan-eng' },
-        { h: 'Croatia', a: 'Ghana', pred: 'l-cro-gha' },
-      ],
+      'Bosnia':'ba','Sweden':'se','Turkey':'tr','Czech Republic':'cz',
+      'Cabo Verde':'cv','Ivory Coast':'ci','DR Congo':'cd',
     };
 
     function flagUrl(code) {
@@ -403,82 +62,368 @@
       return `https://flagcdn.com/16x12/${code}.png`;
     }
 
+    const STORAGE_KEY = 'wc26_predictions';
+
+    function loadPreds() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch { return {}; }
+    }
+
+    function savePreds(p) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+    }
+
+    const groupMatches = {
+      a: [
+        { mid: 'a-0', h: 'Mexico', a: 'South Africa', hs: 2, as: 0 },
+        { mid: 'a-1', h: 'South Korea', a: 'Czechia', hs: 2, as: 1 },
+        { mid: 'a-2', h: 'Czechia', a: 'South Africa', hs: 1, as: 1 },
+        { mid: 'a-3', h: 'Mexico', a: 'South Korea', hs: 1, as: 0 },
+        { mid: 'a-4', h: 'Mexico', a: 'Czechia', hs: 3, as: 0 },
+        { mid: 'a-5', h: 'South Africa', a: 'South Korea', hs: 1, as: 0 },
+      ],
+      b: [
+        { mid: 'b-0', h: 'Canada', a: 'Bosnia & H.', hs: 1, as: 1 },
+        { mid: 'b-1', h: 'Switzerland', a: 'Qatar', hs: 1, as: 1 },
+        { mid: 'b-2', h: 'Switzerland', a: 'Bosnia & H.', hs: 4, as: 1 },
+        { mid: 'b-3', h: 'Canada', a: 'Qatar', hs: 6, as: 0 },
+        { mid: 'b-4', h: 'Switzerland', a: 'Canada', hs: 3, as: 1 },
+        { mid: 'b-5', h: 'Bosnia & H.', a: 'Qatar', hs: 3, as: 1 },
+      ],
+      c: [
+        { mid: 'c-0', h: 'Brazil', a: 'Morocco', hs: 1, as: 1 },
+        { mid: 'c-1', h: 'Scotland', a: 'Haiti', hs: 1, as: 0 },
+        { mid: 'c-2', h: 'Scotland', a: 'Morocco', hs: 0, as: 1 },
+        { mid: 'c-3', h: 'Brazil', a: 'Haiti', hs: 3, as: 0 },
+        { mid: 'c-4', h: 'Scotland', a: 'Brazil', hs: 0, as: 3 },
+        { mid: 'c-5', h: 'Morocco', a: 'Haiti', hs: 4, as: 2 },
+      ],
+      d: [
+        { mid: 'd-0', h: 'USA', a: 'Paraguay', hs: 4, as: 1 },
+        { mid: 'd-1', h: 'Australia', a: 'Türkiye', hs: 2, as: 0 },
+        { mid: 'd-2', h: 'USA', a: 'Australia', hs: 2, as: 0 },
+        { mid: 'd-3', h: 'Türkiye', a: 'Paraguay', hs: 0, as: 1 },
+        { mid: 'd-4', h: 'Türkiye', a: 'USA', hs: 3, as: 2 },
+        { mid: 'd-5', h: 'Paraguay', a: 'Australia', hs: 0, as: 0 },
+      ],
+      e: [
+        { mid: 'e-0', h: 'Germany', a: 'Curaçao', hs: 7, as: 1 },
+        { mid: 'e-1', h: "Côte d'Ivoire", a: 'Ecuador', hs: 1, as: 0 },
+        { mid: 'e-2', h: 'Germany', a: "Côte d'Ivoire", hs: 2, as: 1 },
+        { mid: 'e-3', h: 'Ecuador', a: 'Curaçao', hs: 0, as: 0 },
+        { mid: 'e-4', h: 'Curaçao', a: "Côte d'Ivoire", hs: 0, as: 2 },
+        { mid: 'e-5', h: 'Ecuador', a: 'Germany', hs: 2, as: 1 },
+      ],
+      f: [
+        { mid: 'f-0', h: 'Netherlands', a: 'Japan', hs: 2, as: 2 },
+        { mid: 'f-1', h: 'Sweden', a: 'Tunisia', hs: 5, as: 1 },
+        { mid: 'f-2', h: 'Netherlands', a: 'Sweden', hs: 5, as: 0 },
+        { mid: 'f-3', h: 'Japan', a: 'Tunisia', hs: 4, as: 0 },
+        { mid: 'f-4', h: 'Japan', a: 'Sweden', hs: 1, as: 1 },
+        { mid: 'f-5', h: 'Netherlands', a: 'Tunisia', hs: 3, as: 1 },
+      ],
+      g: [
+        { mid: 'g-0', h: 'Belgium', a: 'Egypt', hs: 1, as: 1 },
+        { mid: 'g-1', h: 'Iran', a: 'New Zealand', hs: 2, as: 2 },
+        { mid: 'g-2', h: 'Belgium', a: 'Iran', hs: 0, as: 0 },
+        { mid: 'g-3', h: 'Egypt', a: 'New Zealand', hs: 3, as: 1 },
+        { mid: 'g-4', h: 'Egypt', a: 'Iran', hs: 1, as: 1 },
+        { mid: 'g-5', h: 'New Zealand', a: 'Belgium', hs: 1, as: 5 },
+      ],
+      h: [
+        { mid: 'h-0', h: 'Spain', a: 'Cape Verde', hs: 0, as: 0 },
+        { mid: 'h-1', h: 'Saudi Arabia', a: 'Uruguay', hs: 1, as: 1 },
+        { mid: 'h-2', h: 'Spain', a: 'Saudi Arabia', hs: 4, as: 0 },
+        { mid: 'h-3', h: 'Uruguay', a: 'Cape Verde', hs: 2, as: 2 },
+        { mid: 'h-4', h: 'Cape Verde', a: 'Saudi Arabia', hs: 0, as: 0 },
+        { mid: 'h-5', h: 'Uruguay', a: 'Spain', hs: 0, as: 1 },
+      ],
+      i: [
+        { mid: 'i-0', h: 'France', a: 'Senegal', hs: 3, as: 1 },
+        { mid: 'i-1', h: 'Norway', a: 'Iraq', hs: 4, as: 1 },
+        { mid: 'i-2', h: 'France', a: 'Iraq', hs: 3, as: 0 },
+        { mid: 'i-3', h: 'Norway', a: 'Senegal', hs: 3, as: 2 },
+        { mid: 'i-4', h: 'Norway', a: 'France', hs: 1, as: 4 },
+        { mid: 'i-5', h: 'Senegal', a: 'Iraq', hs: 5, as: 0 },
+      ],
+      j: [
+        { mid: 'j-0', h: 'Argentina', a: 'Algeria', hs: 3, as: 0 },
+        { mid: 'j-1', h: 'Austria', a: 'Jordan', hs: 3, as: 1 },
+        { mid: 'j-2', h: 'Argentina', a: 'Austria', hs: 2, as: 0 },
+        { mid: 'j-3', h: 'Jordan', a: 'Algeria', hs: 1, as: 2 },
+        { mid: 'j-4', h: 'Jordan', a: 'Argentina', hs: 1, as: 3 },
+        { mid: 'j-5', h: 'Algeria', a: 'Austria', hs: 3, as: 3 },
+      ],
+      k: [
+        { mid: 'k-0', h: 'Portugal', a: 'DR Congo', hs: 1, as: 1 },
+        { mid: 'k-1', h: 'Uzbekistan', a: 'Colombia', hs: 1, as: 3 },
+        { mid: 'k-2', h: 'Portugal', a: 'Uzbekistan', hs: 5, as: 0 },
+        { mid: 'k-3', h: 'Colombia', a: 'DR Congo', hs: 1, as: 0 },
+        { mid: 'k-4', h: 'Colombia', a: 'Portugal', hs: 0, as: 0 },
+        { mid: 'k-5', h: 'DR Congo', a: 'Uzbekistan', hs: 3, as: 1 },
+      ],
+      l: [
+        { mid: 'l-0', h: 'England', a: 'Croatia', hs: 4, as: 2 },
+        { mid: 'l-1', h: 'Ghana', a: 'Panama', hs: 1, as: 0 },
+        { mid: 'l-2', h: 'England', a: 'Ghana', hs: 0, as: 0 },
+        { mid: 'l-3', h: 'Panama', a: 'Croatia', hs: 0, as: 1 },
+        { mid: 'l-4', h: 'Panama', a: 'England', hs: 0, as: 2 },
+        { mid: 'l-5', h: 'Croatia', a: 'Ghana', hs: 2, as: 1 },
+      ],
+    };
+
+    function getScore(m, preds) {
+      const p = preds[m.mid];
+      return p ? { hs: p.h, as: p.a } : { hs: m.hs, as: m.as };
+    }
+
     function computeStandings(groupId, preds) {
       const matches = groupMatches[groupId];
       const teams = {};
-
       matches.forEach((m) => {
-        const hs = m.pred ? (preds[m.pred]?.h ?? 0) : m.hs;
-        const as = m.pred ? (preds[m.pred]?.a ?? 0) : m.as;
-
+        const { hs, as } = getScore(m, preds);
         [m.h, m.a].forEach((t) => {
           if (!teams[t]) teams[t] = { name: t, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 };
         });
-
-        teams[m.h].p++;
-        teams[m.a].p++;
-        teams[m.h].gf += hs;
-        teams[m.h].ga += as;
-        teams[m.a].gf += as;
-        teams[m.a].ga += hs;
-
+        teams[m.h].p++; teams[m.a].p++;
+        teams[m.h].gf += hs; teams[m.h].ga += as;
+        teams[m.a].gf += as; teams[m.a].ga += hs;
         if (hs > as) { teams[m.h].w++; teams[m.h].pts += 3; teams[m.a].l++; }
         else if (hs < as) { teams[m.a].w++; teams[m.a].pts += 3; teams[m.h].l++; }
         else { teams[m.h].d++; teams[m.h].pts++; teams[m.a].d++; teams[m.a].pts++; }
       });
-
       return Object.values(teams).sort((a, b) =>
         b.pts - a.pts || b.gd - a.gd || b.gf - a.gf
       );
     }
 
-    function renderStandings() {
-      const preds = loadPredictions();
-      document.querySelectorAll('.standings').forEach((el) => {
-        const g = el.dataset.group;
-        const rows = computeStandings(g, preds);
-        el.innerHTML = `<table>
-          <thead><tr><th>#</th><th></th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
-          <tbody>${rows.map((t, i) => {
-            const gd = t.gd > 0 ? '+' + t.gd : String(t.gd);
-            const code = flags[t.name] || 'xx';
-            const cls = i < 2 ? ' class="qual"' : '';
-            return `<tr${cls}><td class="pos">${i + 1}</td><td class="flag-cell"><img src="${flagUrl(code)}" alt="" loading="lazy"></td><td class="name-cell">${t.name}</td><td>${t.p}</td><td>${gd}</td><td>${t.pts}</td></tr>`;
-          }).join('')}</tbody>
-        </table>`;
+    function fixtureHTML(m, preds) {
+      const p = preds[m.mid];
+      const hs = p ? p.h : m.hs;
+      const as = p ? p.a : m.as;
+      const fc = flags[m.h] || 'xx';
+      const ac = flags[m.a] || 'xx';
+      return `
+        <div class="fixture-item" data-mid="${m.mid}">
+          <div class="fixture-left">
+            <span class="ft-tag">FT</span>
+            <span class="fixture-team"><img src="${flagUrl(fc)}" alt="" class="fixture-flag"> ${m.h}</span>
+          </div>
+          <div class="score-group">
+            <div class="score-picker">
+              <button class="scr-btn" data-action="dec" data-side="h">−</button>
+              <span class="score" data-side="h">${hs}</span>
+              <button class="scr-btn" data-action="inc" data-side="h">+</button>
+            </div>
+            <span class="vs">v</span>
+            <div class="score-picker">
+              <button class="scr-btn" data-action="dec" data-side="a">−</button>
+              <span class="score" data-side="a">${as}</span>
+              <button class="scr-btn" data-action="inc" data-side="a">+</button>
+            </div>
+          </div>
+          <div class="fixture-right">
+            <span class="fixture-team"><img src="${flagUrl(ac)}" alt="" class="fixture-flag"> ${m.a}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachFixtureListeners() {
+      document.querySelectorAll('.fixture-item[data-mid]').forEach((item) => {
+        item.addEventListener('click', (e) => {
+          const btn = e.target.closest('.scr-btn');
+          if (!btn) return;
+          const side = btn.dataset.side;
+          const scoreEl = item.querySelector(`.score[data-side="${side}"]`);
+          let val = parseInt(scoreEl.textContent, 10);
+          val = btn.dataset.action === 'inc' ? Math.min(val + 1, 99) : Math.max(val - 1, 0);
+          scoreEl.textContent = val;
+          const mid = item.dataset.mid;
+          const preds = loadPreds();
+          if (!preds[mid]) preds[mid] = { h: 0, a: 0 };
+          preds[mid][side] = val;
+          savePreds(preds);
+          renderGroups();
+        });
       });
     }
 
-    const preds = loadPredictions();
+    function renderGroups() {
+      const grid = document.getElementById('group-grid');
+      grid.innerHTML = '';
+      const preds = loadPreds();
+      const groupIds = 'abcdefghijkl';
+      const groupNames = {
+        a:'Group A',b:'Group B',c:'Group C',d:'Group D',e:'Group E',f:'Group F',
+        g:'Group G',h:'Group H',i:'Group I',j:'Group J',k:'Group K',l:'Group L'
+      };
 
-    document.querySelectorAll('.fixture-item.predict').forEach((item) => {
-      const match = item.dataset.match;
-      const saved = preds[match] || { h: 0, a: 0 };
+      for (const id of groupIds) {
+        const rows = computeStandings(id, preds);
+        const card = document.createElement('div');
+        card.className = 'group-card';
 
-      item.querySelectorAll('.score[data-side]').forEach((el) => {
-        el.textContent = saved[el.dataset.side] ?? 0;
+        const matches = groupMatches[id];
+        let fixturesHTML = '';
+        let allComplete = true;
+        matches.forEach((m) => {
+          fixturesHTML += fixtureHTML(m, preds);
+          const p = preds[m.mid];
+          const hs = p ? p.h : m.hs;
+          const as = p ? p.a : m.as;
+          if (hs === '' || hs === undefined || as === '' || as === undefined) allComplete = false;
+        });
+        if (allComplete) completedGroups.add(id);
+
+        const status = completedGroups.has(id) ? 'Complete' : 'In Progress';
+        const badgeCls = completedGroups.has(id) ? 'badge' : 'badge warn';
+        card.innerHTML = `
+          <h3>${groupNames[id]} <span class="${badgeCls}">${status}</span></h3>
+          <table>
+            <thead><tr><th>#</th><th></th><th>Team</th><th>P</th><th>GD</th><th>Pts</th></tr></thead>
+            <tbody>${rows.map((t, i) => {
+              const gd = t.gd > 0 ? '+' + t.gd : String(t.gd);
+              const code = flags[t.name] || 'xx';
+              const cls = i < 2 ? ' class="qual"' : '';
+              return `<tr${cls}><td class="pos">${i + 1}</td><td class="flag-cell"><img src="${flagUrl(code)}" alt="" loading="lazy"></td><td class="name-cell">${t.name}</td><td>${t.p}</td><td>${gd}</td><td class="pts-cell">${t.pts}</td></tr>`;
+            }).join('')}</tbody>
+          </table>
+          <div class="fixtures-title">FIXTURES</div>
+          <div class="fixture-list">${fixturesHTML}</div>
+        `;
+        grid.appendChild(card);
+      }
+      attachFixtureListeners();
+    }
+
+    function isWinner(hs, as) {
+      if (hs === '' || as === '' || hs === undefined || as === undefined) return false;
+      return parseInt(hs) > parseInt(as);
+    }
+
+    function renderBracket() {
+      const rounds = [
+        { label: 'Round of 32', id: 'r32' },
+        { label: 'Round of 16', id: 'r16' },
+        { label: 'Quarter-finals', id: 'qf' },
+        { label: 'Semi-finals', id: 'sf' },
+        { label: 'Final', id: 'fn' },
+      ];
+
+      const bracket = document.getElementById('bracket');
+      bracket.innerHTML = '';
+
+      const bracketData = {
+        r32: [
+          { h: 'South Africa', hs: '0', a: 'Canada', as: '1' },
+          { h: 'Germany', hs: '1', a: 'Paraguay', as: '1', note: '4-3 pens' },
+          { h: 'Netherlands', hs: '1', a: 'Morocco', as: '1', note: '2-3 pens' },
+          { h: 'Brazil', hs: '2', a: 'Japan', as: '1' },
+          { h: 'France', hs: '3', a: 'Sweden', as: '0' },
+          { h: 'Norway', hs: '2', a: 'Ivory Coast', as: '1' },
+          { h: 'Mexico', hs: '2', a: 'Ecuador', as: '0' },
+          { h: 'England', hs: '2', a: 'DR Congo', as: '1' },
+          { h: 'USA', hs: '2', a: 'Bosnia', as: '0' },
+          { h: 'Belgium', hs: '3', a: 'Senegal', as: '2' },
+          { h: 'Portugal', hs: '', a: 'Croatia', as: '' },
+          { h: 'Spain', hs: '', a: 'Austria', as: '' },
+          { h: 'Switzerland', hs: '', a: 'Algeria', as: '' },
+          { h: 'Argentina', hs: '', a: 'Cape Verde', as: '' },
+          { h: 'Colombia', hs: '', a: 'Ghana', as: '' },
+          { h: 'Australia', hs: '', a: 'Egypt', as: '' },
+        ],
+        r16: [
+          { h: 'Canada', hs: '', a: 'Paraguay', as: '' },
+          { h: 'Morocco', hs: '', a: 'Brazil', as: '' },
+          { h: 'France', hs: '', a: 'Norway', as: '' },
+          { h: 'Mexico', hs: '', a: 'England', as: '' },
+          { h: 'USA', hs: '', a: 'Belgium', as: '' },
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+        ],
+        qf: [
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+        ],
+        sf: [
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+        ],
+        fn: [
+          { h: 'TBD', hs: '', a: 'TBD', as: '' },
+        ],
+      };
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'bracket-inner';
+
+      rounds.forEach((round, ri) => {
+        const col = document.createElement('div');
+        col.className = 'bracket-col';
+
+        const label = document.createElement('div');
+        label.className = 'bracket-round-label';
+        label.textContent = round.label;
+        col.appendChild(label);
+
+        const matchList = document.createElement('div');
+        matchList.className = 'bracket-matches';
+
+        const matches = bracketData[round.id];
+
+        matches.forEach((m, mi) => {
+          const card = document.createElement('div');
+          card.className = 'bracket-match';
+          if (ri > 0) card.classList.add('has-left');
+          if (ri < rounds.length - 1) card.classList.add('has-right');
+
+          const hw = isWinner(m.hs, m.as) ? ' winner' : '';
+          const aw = isWinner(m.as, m.hs) ? ' winner' : '';
+
+          card.innerHTML = `
+            <div class="match-card">
+              <div class="match-team${hw}">
+                <span class="team-name">${m.h}</span>
+                <span class="team-score">${m.hs !== '' ? m.hs : '-'}</span>
+              </div>
+              <div class="match-team${aw}">
+                <span class="team-name">${m.a}</span>
+                <span class="team-score">${m.as !== '' ? m.as : '-'}</span>
+              </div>
+              ${m.note ? '<div class="match-note">' + m.note + '</div>' : ''}
+            </div>
+          `;
+          matchList.appendChild(card);
+        });
+
+        col.appendChild(matchList);
+        wrapper.appendChild(col);
+
+        if (ri < rounds.length - 1) {
+          const gap = document.createElement('div');
+          gap.className = 'bracket-gap';
+          wrapper.appendChild(gap);
+        }
       });
 
-      item.addEventListener('click', (e) => {
-        const btn = e.target.closest('.scr-btn');
-        if (!btn) return;
+      bracket.appendChild(wrapper);
+    }
 
-        const side = btn.dataset.side;
-        const scoreEl = item.querySelector(`.score[data-side="${side}"]`);
-        let val = parseInt(scoreEl.textContent, 10);
+    renderGroups();
+    renderBracket();
 
-        val = btn.dataset.action === 'inc' ? Math.min(val + 1, 99) : Math.max(val - 1, 0);
-        scoreEl.textContent = val;
-
-        const p = loadPredictions();
-        if (!p[match]) p[match] = { h: 0, a: 0 };
-        p[match][side] = val;
-        savePredictions(p);
-        renderStandings();
+    document.querySelectorAll('.tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + '-view').classList.add('active');
       });
     });
-
-    renderStandings();
   </script>
 </body>
 </html>
