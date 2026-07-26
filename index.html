@@ -707,107 +707,31 @@
     function renderAPIMatches(matchesData, leagueCode) {
       const grid = document.getElementById('group-grid');
       if (!matchesData || !matchesData.matches || matchesData.matches.length === 0) return;
-      const preds = loadPreds();
 
-      const finished = matchesData.matches.filter(m => m.status === 'FINISHED');
-      const scheduled = matchesData.matches.filter(m => m.status === 'SCHEDULED' || m.status === 'TIMED');
+      const knockoutStages = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32','PLAYOFF_ROUND','QUALIFYING_PLAYOFF','THIRD_QUALIFYING_ROUND','SECOND_QUALIFYING_ROUND','FIRST_QUALIFYING_ROUND'];
+      const allMatches = matchesData.matches;
+      const finishedCount = allMatches.filter(m => m.status === 'FINISHED').length;
 
       const groupedMatches = {};
-      const currentMatchday = finished.length > 0 ? Math.max(...finished.map(m => m.matchday)) : 1;
-
-      matchesData.matches.forEach(m => {
-        const md = m.matchday || 1;
+      allMatches.forEach(m => {
+        const md = m.matchday || m.round || 1;
         if (!groupedMatches[md]) groupedMatches[md] = [];
         groupedMatches[md].push(m);
       });
+
+      const sortedMDs = Object.keys(groupedMatches).sort((a,b) => Number(a) - Number(b));
+      const latestMDs = sortedMDs.slice(-8);
 
       const card = document.createElement('div');
       card.className = 'group-card';
       card.style.gridColumn = '1 / -1';
 
-      let matchdaysHTML = '';
-      Object.keys(groupedMatches).sort((a,b) => a-b).forEach(md => {
-        const mms = groupedMatches[md];
-        const allDone = mms.every(m => m.status === 'FINISHED');
-        const matchdayLabel = `Matchday ${md}`;
-
-        matchdaysHTML += `<div class="fixtures-title" style="margin-top:12px">${matchdayLabel}</div><div class="fixture-list">`;
-        mms.forEach(m => {
-          const hName = m.homeTeam.name;
-          const aName = m.awayTeam.name;
-          const hFlag = getFlagFromCountry(m.homeTeam.area ? m.homeTeam.area.name : '');
-          const aFlag = getFlagFromCountry(m.awayTeam.area ? m.awayTeam.area.name : '');
-          TEAM_FLAG_MAP[hName] = hFlag;
-          TEAM_FLAG_MAP[aName] = aFlag;
-          const hScore = m.score.fullTime.home;
-          const aScore = m.score.fullTime.away;
-          const isFT = m.status === 'FINISHED';
-          const mid = 'api-'+m.id;
-          const p = preds[mid];
-          const displayHS = isFT ? hScore : (p ? p.h : '-');
-          const displayAS = isFT ? aScore : (p ? p.a : '-');
-          const disabled = isFT ? ' disabled' : '';
-
-          matchdaysHTML += `
-            <div class="fixture-item" data-mid="${mid}" data-api="true">
-              <div class="fixture-left">
-                ${isFT ? '<span class="ft-tag">FT</span>' : ''}
-                <span class="fixture-team"><img src="${flagUrl(hFlag)}" alt="" class="fixture-flag"> ${hName}</span>
-              </div>
-              <div class="score-group">
-                <div class="score-picker">
-                  <button class="scr-btn" data-action="dec" data-side="h"${disabled}>&minus;</button>
-                  <span class="score" data-side="h">${displayHS}</span>
-                  <button class="scr-btn" data-action="inc" data-side="h"${disabled}>+</button>
-                </div>
-                <span class="vs">v</span>
-                <div class="score-picker">
-                  <button class="scr-btn" data-action="dec" data-side="a"${disabled}>&minus;</button>
-                  <span class="score" data-side="a">${displayAS}</span>
-                  <button class="scr-btn" data-action="inc" data-side="a"${disabled}>+</button>
-                </div>
-              </div>
-              <div class="fixture-right">
-                <span class="fixture-team"><img src="${flagUrl(aFlag)}" alt="" class="fixture-flag"> ${aName}</span>
-              </div>
-            </div>
-          `;
-        });
-        matchdaysHTML += '</div>';
-      });
-
-      card.innerHTML = `
-        <h3>${COMPETITIONS[leagueCode]?.name || leagueCode} <span class="badge">${matchesData.matches.length} matches</span></h3>
-        ${matchdaysHTML}
-      `;
-      grid.prepend(card);
-    }
-
-    function renderAPIMatchesByMatchday(matchesData, leagueCode) {
-      const grid = document.getElementById('group-grid');
-      if (!matchesData || !matchesData.matches || matchesData.matches.length === 0) return;
-
-      const knockoutStages = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32'];
-      const regularMatches = matchesData.matches.filter(m => !knockoutStages.includes(m.stage));
-      if (regularMatches.length === 0) return;
-
-      const grouped = {};
-      regularMatches.forEach(m => {
-        const md = m.matchday || 1;
-        if (!grouped[md]) grouped[md] = [];
-        grouped[md].push(m);
-      });
-
-      const sortedMDs = Object.keys(grouped).sort((a,b) => b-a);
-      const latestMDs = sortedMDs.slice(0, 5);
+      const season = `${currentYear}/${String(currentYear+1).slice(2)}`;
+      let html = `<h3>${COMPETITIONS[leagueCode]?.name || leagueCode} Results <span class="badge">${finishedCount}/${allMatches.length} played</span></h3>`;
 
       latestMDs.forEach(md => {
-        const mms = grouped[md];
-        const card = document.createElement('div');
-        card.className = 'group-card';
-        card.style.gridColumn = '1 / -1';
-
-        let fixturesHTML = '<div class="fixtures-title">Matchday ' + md + '</div><div class="fixture-list">';
+        const mms = groupedMatches[md];
+        html += `<div class="fixtures-title">${mms[0] && mms[0].stage && knockoutStages.includes(mms[0].stage) ? mms[0].stage.replace(/_/g,' ') : 'Matchday ' + md}</div><div class="fixture-list">`;
         mms.forEach(m => {
           const hName = m.homeTeam.name;
           const aName = m.awayTeam.name;
@@ -818,21 +742,27 @@
           const hScore = m.score.fullTime.home;
           const aScore = m.score.fullTime.away;
           const isFT = m.status === 'FINISHED';
-          const mid = 'api-'+m.id;
-          const hDisplay = isFT ? (hScore !== null ? hScore : '-') : '-';
-          const aDisplay = isFT ? (aScore !== null ? aScore : '-') : '-';
-          const disabled = isFT ? ' disabled' : '';
+          const hHT = m.score.halfTime ? m.score.halfTime.home : null;
+          const aHT = m.score.halfTime ? m.score.halfTime.away : null;
+          const hPen = m.score.penalties ? m.score.penalties.home : null;
+          const aPen = m.score.penalties ? m.score.penalties.away : null;
+          const hAgg = m.score.aggregateHome;
+          const aAgg = m.score.aggregateAway;
 
-          fixturesHTML += `
-            <div class="fixture-item" data-mid="${mid}" data-api="true">
+          const htStr = (hHT !== null && aHT !== null && isFT) ? ` (HT ${hHT}-${aHT})` : '';
+          const aggStr = (hAgg !== null && hAgg !== undefined && aAgg !== null && aAgg !== undefined) ? ` [agg ${hAgg}-${aAgg}]` : '';
+          const penStr = (hPen !== null && aPen !== null) ? ` (${hPen}-${aPen} pen)` : '';
+
+          const scoreDisplay = isFT ? `${hScore} - ${aScore}${penStr}${aggStr}${htStr}` : 'vs';
+
+          html += `
+            <div class="fixture-item">
               <div class="fixture-left">
                 ${isFT ? '<span class="ft-tag">FT</span>' : ''}
                 <span class="fixture-team"><img src="${flagUrl(hFlag)}" alt="" class="fixture-flag"> ${hName}</span>
               </div>
               <div class="score-group">
-                <span class="score" data-side="h" style="width:auto;padding:0 4px">${hDisplay}</span>
-                <span class="vs">v</span>
-                <span class="score" data-side="a" style="width:auto;padding:0 4px">${aDisplay}</span>
+                <span class="score" style="width:auto;padding:0 6px;font-weight:700">${scoreDisplay}</span>
               </div>
               <div class="fixture-right">
                 <span class="fixture-team"><img src="${flagUrl(aFlag)}" alt="" class="fixture-flag"> ${aName}</span>
@@ -840,14 +770,15 @@
             </div>
           `;
         });
-        fixturesHTML += '</div>';
-
-        card.innerHTML = `
-          <h3>${COMPETITIONS[leagueCode]?.name || leagueCode} — Matchday ${md} <span class="badge">${mms.length} matches</span></h3>
-          ${fixturesHTML}
-        `;
-        grid.appendChild(card);
+        html += '</div>';
       });
+
+      if (sortedMDs.length > 8) {
+        html += `<div class="fixtures-title" style="color:var(--muted-foreground);font-style:italic">Showing last 8 matchdays of ${sortedMDs.length} total</div>`;
+      }
+
+      card.innerHTML = html;
+      grid.appendChild(card);
     }
 
     function renderAPIKnockout(knockoutData, leagueCode) {
@@ -1014,7 +945,6 @@
       if (matchesData && matchesData.matches && matchesData.matches.length > 0) {
         const knockoutStages = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32','PLAYOFF_ROUND','QUALIFYING_PLAYOFF','THIRD_QUALIFYING_ROUND','SECOND_QUALIFYING_ROUND','FIRST_QUALIFYING_ROUND'];
         const knockoutMatches = matchesData.matches.filter(m => knockoutStages.includes(m.stage));
-        const regularMatches = matchesData.matches.filter(m => !knockoutStages.includes(m.stage));
 
         if (knockoutMatches.length > 0) {
           hasKnockout = true;
@@ -1023,12 +953,8 @@
           document.getElementById('bracket').innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No knockout rounds for this ' + COMPETITIONS[leagueKey].name + ' season.</p></div>';
         }
 
-        if (regularMatches.length > 0) {
-          const hasGroup = standingsData && standingsData.standings && standingsData.standings.some(t => t.group);
-          if (!hasGroup) {
-            renderAPIMatchesByMatchday(matchesData, leagueKey);
-          }
-        }
+        renderAPIMatches(matchesData, leagueKey);
+
       } else {
         document.getElementById('bracket').innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No match data for this season.</p></div>';
       }
