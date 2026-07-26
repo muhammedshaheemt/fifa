@@ -619,11 +619,10 @@
     async function fetchAPI(url) {
       const API_TOKEN = '90fb2a65fd534cf5899c49e8e4e5c4c4';
       try {
-        const resp = await fetch(url, { headers: { 'X-Auth-Token': API_TOKEN } });
+        const resp = await fetch(url, { headers: { 'X-Auth-Token': API_TOKEN }, signal: AbortSignal.timeout(3000) });
         if (!resp.ok) throw new Error('API error ' + resp.status);
         return await resp.json();
       } catch (e) {
-        console.error('Fetch error:', e);
         return null;
       }
     }
@@ -707,13 +706,13 @@
       return { matches };
     }
 
-    async function fetchLeagueMatches(leagueCode, year) {
+    async function fetchLeagueMatches(leagueCode, year, existingStandings) {
+      const staticMatches = buildStaticMatches(leagueCode, year);
+      if (staticMatches && staticMatches.matches && staticMatches.matches.length > 0) return staticMatches;
       const seasonParam = year ? `?season=${year}&` : '?';
       const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/matches${seasonParam}status=SCHEDULED,IN_PLAY,PAUSED,FINISHED`);
       if (data && data.matches) return data;
-      const staticMatches = buildStaticMatches(leagueCode, year);
-      if (staticMatches && staticMatches.matches && staticMatches.matches.length > 0) return staticMatches;
-      const standings = await fetchLeagueStandings(leagueCode, year);
+      const standings = existingStandings || buildStaticStandings(leagueCode, year);
       return generateMatchesFromStandings(standings, leagueCode);
     }
 
@@ -1096,7 +1095,7 @@
       let hasKnockout = false;
 
       const standingsData = await fetchLeagueStandings(leagueKey, currentYear);
-      const matchesData = await fetchLeagueMatches(leagueKey, currentYear);
+      const matchesData = await fetchLeagueMatches(leagueKey, currentYear, standingsData);
 
       grid.innerHTML = '';
 
