@@ -50,6 +50,16 @@
       <button class="league-btn" data-league="WC">World Cup Qualifiers</button>
     </div>
 
+    <div class="year-selector" id="year-selector">
+      <button class="year-arrow" id="year-prev">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="year-pills" id="year-pills"></div>
+      <button class="year-arrow" id="year-next">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+
     <div id="league-banner"></div>
 
     <div class="tabs">
@@ -81,6 +91,9 @@
 
     const STORAGE_KEY = 'wc26_preds';
     const BRACKET_SEED_KEY = 'wc26_bracket_seeds';
+
+    let currentYear = new Date().getFullYear();
+    const YEAR_RANGE = { min: 2002, max: new Date().getFullYear() };
 
     function loadPreds() {
       try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
@@ -179,8 +192,8 @@
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             </div>
             <div>
-              <div class="league-header-title">${comp.name}</div>
-              <div class="league-header-sub">${comp.country} · ${comp.type === 'domestic' ? 'Domestic League' : comp.type === 'continental' ? 'Continental Cup' : 'International'}</div>
+              <div class="league-header-title">${comp.name} ${currentYear}/${String(currentYear+1).slice(2)}</div>
+              <div class="league-header-sub">${comp.country} · ${comp.type === 'domestic' ? 'Domestic League' : comp.type === 'continental' ? 'Continental Cup' : 'International'} · Season ${currentYear}</div>
             </div>
           </div>
           <span class="league-header-badge">${comp.hasGroups ? 'Groups + Knockout' : 'League'}</span>
@@ -573,18 +586,21 @@
       return matches;
     }
 
-    async function fetchLeagueStandings(leagueCode) {
-      const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/standings`);
+    async function fetchLeagueStandings(leagueCode, year) {
+      const seasonParam = year ? `?season=${year}` : '';
+      const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/standings${seasonParam}`);
       return data;
     }
 
-    async function fetchLeagueMatches(leagueCode) {
-      const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/matches?status=SCHEDULED,IN_PLAY,PAUSED,FINISHED`);
+    async function fetchLeagueMatches(leagueCode, year) {
+      const seasonParam = year ? `&season=${year}` : '';
+      const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/matches?status=SCHEDULED,IN_PLAY,PAUSED,FINISHED${seasonParam}`);
       return data;
     }
 
-    async function fetchLeagueTeams(leagueCode) {
-      const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/teams`);
+    async function fetchLeagueTeams(leagueCode, year) {
+      const seasonParam = year ? `?season=${year}` : '';
+      const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/teams${seasonParam}`);
       return data;
     }
 
@@ -872,8 +888,8 @@
       const grid = document.getElementById('group-grid');
       grid.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><span>Loading from football-data.org API...</span></div>';
 
-      const standingsData = await fetchLeagueStandings(leagueKey);
-      const matchesData = await fetchLeagueMatches(leagueKey);
+      const standingsData = await fetchLeagueStandings(leagueKey, currentYear);
+      const matchesData = await fetchLeagueMatches(leagueKey, currentYear);
 
       if (standingsData) {
         renderAPIGroups(standingsData, leagueKey);
@@ -988,6 +1004,44 @@
       });
     });
 
+    function renderYearPills() {
+      const container = document.getElementById('year-pills');
+      container.innerHTML = '';
+      const years = [];
+      for (let y = YEAR_RANGE.max; y >= YEAR_RANGE.min; y--) years.push(y);
+      years.forEach(y => {
+        const pill = document.createElement('button');
+        pill.className = 'year-pill' + (y === currentYear ? ' active' : '');
+        pill.textContent = y;
+        pill.dataset.year = y;
+        pill.addEventListener('click', () => {
+          currentYear = y;
+          renderYearPills();
+          loadLeague(currentLeague);
+        });
+        container.appendChild(pill);
+      });
+      const activePill = container.querySelector('.year-pill.active');
+      if (activePill) activePill.scrollIntoView({ block: 'nearest', inline: 'center' });
+    }
+
+    document.getElementById('year-prev').addEventListener('click', () => {
+      if (currentYear > YEAR_RANGE.min) {
+        currentYear--;
+        renderYearPills();
+        loadLeague(currentLeague);
+      }
+    });
+
+    document.getElementById('year-next').addEventListener('click', () => {
+      if (currentYear < YEAR_RANGE.max) {
+        currentYear++;
+        renderYearPills();
+        loadLeague(currentLeague);
+      }
+    });
+
+    renderYearPills();
     loadLeague('wc');
   </script>
 </body>
