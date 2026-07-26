@@ -872,80 +872,55 @@ tr.qual td.name-cell { color: var(--primary); font-weight: 600; }
 
 /* === Year Selector === */
 .year-selector {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 16px;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 6px 10px;
+  border-radius: calc(var(--radius) * 0.9);
+  padding: 3px 6px;
 }
 
-.year-arrow {
+.year-btn {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   background: var(--secondary);
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius) * 0.7);
+  border-radius: 4px;
   color: var(--muted-foreground);
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: all 0.1s ease;
 }
 
-.year-arrow:hover {
+.year-btn:hover:not(:disabled) {
   background: oklch(60% 0.14 152 / 0.12);
   border-color: var(--primary);
   color: var(--primary);
 }
 
-.year-arrow:active {
-  transform: scale(0.93);
+.year-btn:active:not(:disabled) {
+  transform: scale(0.9);
 }
 
-.year-pills {
-  display: flex;
-  gap: 4px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  flex: 1;
-  justify-content: center;
+.year-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
-.year-pills::-webkit-scrollbar {
-  display: none;
-}
-
-.year-pill {
-  flex-shrink: 0;
-  border: 1px solid var(--border);
-  background: var(--secondary);
-  color: var(--muted-foreground);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: calc(var(--radius) * 0.7);
-  cursor: pointer;
-  transition: all 0.12s ease;
-  white-space: nowrap;
-}
-
-.year-pill:hover {
-  color: var(--foreground);
-  border-color: oklch(60% 0.14 152 / 0.3);
-}
-
-.year-pill.active {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border-color: var(--primary);
+.year-display {
+  font-size: 0.8125rem;
   font-weight: 700;
+  color: var(--foreground);
+  min-width: 52px;
+  text-align: center;
+  padding: 0 4px;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
 }
 
 @media (max-width: 700px) {

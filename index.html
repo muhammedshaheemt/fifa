@@ -51,12 +51,12 @@
     </div>
 
     <div class="year-selector" id="year-selector">
-      <button class="year-arrow" id="year-prev">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <button class="year-btn" id="year-prev">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <div class="year-pills" id="year-pills"></div>
-      <button class="year-arrow" id="year-next">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <span class="year-display" id="year-display"></span>
+      <button class="year-btn" id="year-next">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
 
@@ -185,6 +185,7 @@
       const banner = document.getElementById('league-banner');
       const comp = COMPETITIONS[leagueKey];
       if (!comp || leagueKey === 'wc') { banner.innerHTML = ''; return; }
+      const season = `${currentYear}/${String(currentYear+1).slice(2)}`;
       banner.innerHTML = `
         <div class="league-header-banner">
           <div class="league-header-left">
@@ -192,11 +193,11 @@
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             </div>
             <div>
-              <div class="league-header-title">${comp.name} ${currentYear}/${String(currentYear+1).slice(2)}</div>
-              <div class="league-header-sub">${comp.country} · ${comp.type === 'domestic' ? 'Domestic League' : comp.type === 'continental' ? 'Continental Cup' : 'International'} · Season ${currentYear}</div>
+              <div class="league-header-title">${comp.name}</div>
+              <div class="league-header-sub">${comp.country} · ${season} Season</div>
             </div>
           </div>
-          <span class="league-header-badge">${comp.hasGroups ? 'Groups + Knockout' : 'League'}</span>
+          <span class="league-header-badge">${comp.hasGroups ? 'Groups + Knockout' : 'League Table'}</span>
         </div>
       `;
     }
@@ -593,8 +594,8 @@
     }
 
     async function fetchLeagueMatches(leagueCode, year) {
-      const seasonParam = year ? `&season=${year}` : '';
-      const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/matches?status=SCHEDULED,IN_PLAY,PAUSED,FINISHED${seasonParam}`);
+      const seasonParam = year ? `?season=${year}&` : '?';
+      const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/matches${seasonParam}status=SCHEDULED,IN_PLAY,PAUSED,FINISHED`);
       return data;
     }
 
@@ -754,6 +755,73 @@
       grid.prepend(card);
     }
 
+    function renderAPIMatchesByMatchday(matchesData, leagueCode) {
+      const grid = document.getElementById('group-grid');
+      if (!matchesData || !matchesData.matches || matchesData.matches.length === 0) return;
+
+      const knockoutStages = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32'];
+      const regularMatches = matchesData.matches.filter(m => !knockoutStages.includes(m.stage));
+      if (regularMatches.length === 0) return;
+
+      const grouped = {};
+      regularMatches.forEach(m => {
+        const md = m.matchday || 1;
+        if (!grouped[md]) grouped[md] = [];
+        grouped[md].push(m);
+      });
+
+      const sortedMDs = Object.keys(grouped).sort((a,b) => b-a);
+      const latestMDs = sortedMDs.slice(0, 5);
+
+      latestMDs.forEach(md => {
+        const mms = grouped[md];
+        const card = document.createElement('div');
+        card.className = 'group-card';
+        card.style.gridColumn = '1 / -1';
+
+        let fixturesHTML = '<div class="fixtures-title">Matchday ' + md + '</div><div class="fixture-list">';
+        mms.forEach(m => {
+          const hName = m.homeTeam.name;
+          const aName = m.awayTeam.name;
+          const hFlag = getFlagFromCountry(m.homeTeam.area ? m.homeTeam.area.name : '');
+          const aFlag = getFlagFromCountry(m.awayTeam.area ? m.awayTeam.area.name : '');
+          TEAM_FLAG_MAP[hName] = hFlag;
+          TEAM_FLAG_MAP[aName] = aFlag;
+          const hScore = m.score.fullTime.home;
+          const aScore = m.score.fullTime.away;
+          const isFT = m.status === 'FINISHED';
+          const mid = 'api-'+m.id;
+          const hDisplay = isFT ? (hScore !== null ? hScore : '-') : '-';
+          const aDisplay = isFT ? (aScore !== null ? aScore : '-') : '-';
+          const disabled = isFT ? ' disabled' : '';
+
+          fixturesHTML += `
+            <div class="fixture-item" data-mid="${mid}" data-api="true">
+              <div class="fixture-left">
+                ${isFT ? '<span class="ft-tag">FT</span>' : ''}
+                <span class="fixture-team"><img src="${flagUrl(hFlag)}" alt="" class="fixture-flag"> ${hName}</span>
+              </div>
+              <div class="score-group">
+                <span class="score" data-side="h" style="width:auto;padding:0 4px">${hDisplay}</span>
+                <span class="vs">v</span>
+                <span class="score" data-side="a" style="width:auto;padding:0 4px">${aDisplay}</span>
+              </div>
+              <div class="fixture-right">
+                <span class="fixture-team"><img src="${flagUrl(aFlag)}" alt="" class="fixture-flag"> ${aName}</span>
+              </div>
+            </div>
+          `;
+        });
+        fixturesHTML += '</div>';
+
+        card.innerHTML = `
+          <h3>${COMPETITIONS[leagueCode]?.name || leagueCode} — Matchday ${md} <span class="badge">${mms.length} matches</span></h3>
+          ${fixturesHTML}
+        `;
+        grid.appendChild(card);
+      });
+    }
+
     function renderAPIKnockout(knockoutData, leagueCode) {
       const bracket = document.getElementById('bracket');
       bracket.innerHTML = '';
@@ -862,17 +930,12 @@
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
       const config = COMPETITIONS[leagueKey];
-      if (config.hasGroups) {
-        document.querySelector('.tab[data-tab="groups"]').classList.add('active');
-        document.getElementById('groups-view').classList.add('active');
-      } else {
-        document.querySelector('.tab[data-tab="groups"]').classList.add('active');
-        document.getElementById('groups-view').classList.add('active');
-        document.getElementById('knockouts-view').classList.remove('active');
-      }
 
       if (leagueKey === 'wc') {
         document.querySelector('.tabs').style.display = 'inline-flex';
+        document.querySelector('.tab[data-tab="groups"]').classList.add('active');
+        document.getElementById('groups-view').classList.add('active');
+        document.getElementById('knockouts-view').classList.remove('active');
         document.getElementById('league-banner').innerHTML = '';
         document.querySelector('.header-title').textContent = 'FIFA WORLD CUP 2026';
         const grid = document.getElementById('group-grid');
@@ -883,33 +946,52 @@
         return;
       }
 
-      document.querySelector('.tabs').style.display = config.hasGroups || config.hasKnockout ? 'inline-flex' : 'none';
+      const hasBracket = config.hasGroups || config.hasKnockout;
+      document.querySelector('.tabs').style.display = hasBracket ? 'inline-flex' : 'none';
+      document.querySelector('.tab[data-tab="groups"]').classList.add('active');
+      document.getElementById('groups-view').classList.add('active');
+      document.getElementById('knockouts-view').classList.remove('active');
 
       const grid = document.getElementById('group-grid');
-      grid.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><span>Loading from football-data.org API...</span></div>';
+      grid.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><span>Loading ' + (currentYear) + ' season data...</span></div>';
 
       const standingsData = await fetchLeagueStandings(leagueKey, currentYear);
       const matchesData = await fetchLeagueMatches(leagueKey, currentYear);
 
-      if (standingsData) {
-        renderAPIGroups(standingsData, leagueKey);
-      }
-      if (matchesData) {
-        renderAPIMatches(matchesData, leagueKey);
-      }
+      grid.innerHTML = '';
 
-      if (matchesData && matchesData.matches) {
-        const knockoutStages = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32'];
-        const knockoutMatches = matchesData.matches.filter(m => knockoutStages.includes(m.stage));
-        if (knockoutMatches.length > 0 && config.hasKnockout) {
-          renderAPIKnockout(knockoutMatches, leagueKey);
+      if (standingsData && standingsData.standings) {
+        const hasGroup = standingsData.standings.some(t => t.group);
+        if (hasGroup) {
+          renderAPIGroups(standingsData, leagueKey);
         } else {
-          document.getElementById('bracket').innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No knockout rounds available for this competition yet.</p></div>';
+          renderAPILeagueTable(standingsData, leagueKey);
         }
       }
 
+      if (matchesData && matchesData.matches && matchesData.matches.length > 0) {
+        const knockoutStages = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32'];
+        const knockoutMatches = matchesData.matches.filter(m => knockoutStages.includes(m.stage));
+        const groupMatchesAPI = matchesData.matches.filter(m => !knockoutStages.includes(m.stage));
+
+        if (groupMatchesAPI.length > 0 && standingsData && standingsData.standings) {
+          const hasGroup = standingsData.standings.some(t => t.group);
+          if (!hasGroup) {
+            renderAPIMatchesByMatchday(matchesData, leagueKey);
+          }
+        }
+
+        if (knockoutMatches.length > 0) {
+          renderAPIKnockout(knockoutMatches, leagueKey);
+        } else {
+          document.getElementById('bracket').innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No knockout rounds available for this season.</p></div>';
+        }
+      } else {
+        document.getElementById('bracket').innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No knockout data for this season.</p></div>';
+      }
+
       if (!standingsData && !matchesData) {
-        grid.innerHTML = '<div class="no-data"><h3>Could not load data</h3><p>The API request failed. This competition may require a paid plan or may not be available.</p></div>';
+        grid.innerHTML = '<div class="no-data"><h3>Could not load data</h3><p>No data available for ' + COMPETITIONS[leagueKey].name + ' ' + currentYear + '. This season may not be available on the free API tier.</p></div>';
       }
     }
 
@@ -1004,31 +1086,17 @@
       });
     });
 
-    function renderYearPills() {
-      const container = document.getElementById('year-pills');
-      container.innerHTML = '';
-      const years = [];
-      for (let y = YEAR_RANGE.max; y >= YEAR_RANGE.min; y--) years.push(y);
-      years.forEach(y => {
-        const pill = document.createElement('button');
-        pill.className = 'year-pill' + (y === currentYear ? ' active' : '');
-        pill.textContent = y;
-        pill.dataset.year = y;
-        pill.addEventListener('click', () => {
-          currentYear = y;
-          renderYearPills();
-          loadLeague(currentLeague);
-        });
-        container.appendChild(pill);
-      });
-      const activePill = container.querySelector('.year-pill.active');
-      if (activePill) activePill.scrollIntoView({ block: 'nearest', inline: 'center' });
+    function updateYearDisplay() {
+      const el = document.getElementById('year-display');
+      el.textContent = `${currentYear}/${String(currentYear+1).slice(2)}`;
+      document.getElementById('year-prev').disabled = currentYear <= YEAR_RANGE.min;
+      document.getElementById('year-next').disabled = currentYear >= YEAR_RANGE.max;
     }
 
     document.getElementById('year-prev').addEventListener('click', () => {
       if (currentYear > YEAR_RANGE.min) {
         currentYear--;
-        renderYearPills();
+        updateYearDisplay();
         loadLeague(currentLeague);
       }
     });
@@ -1036,12 +1104,12 @@
     document.getElementById('year-next').addEventListener('click', () => {
       if (currentYear < YEAR_RANGE.max) {
         currentYear++;
-        renderYearPills();
+        updateYearDisplay();
         loadLeague(currentLeague);
       }
     });
 
-    renderYearPills();
+    updateYearDisplay();
     loadLeague('wc');
   </script>
 </body>
