@@ -47,7 +47,10 @@
       <button class="league-btn" data-league="DED">Eredivisie</button>
       <button class="league-btn" data-league="PPL">Primeira Liga</button>
       <button class="league-btn" data-league="BSA">Brasileirao</button>
-      <button class="league-btn" data-league="WC">World Cup Qualifiers</button>
+      <button class="league-btn" data-league="WC">WC Qualifiers</button>
+      <button class="league-btn" data-league="ELC">Championship</button>
+      <button class="league-btn" data-league="GBA">Super Lig</button>
+      <button class="league-btn" data-league="CLA">Copa Libertadores</button>
     </div>
 
     <div class="year-selector" id="year-selector">
@@ -146,21 +149,51 @@
       PPL: { name: 'Primeira Liga', country: 'Portugal', emblem: null, type: 'domestic', hasGroups: false, hasKnockout: false },
       BSA: { name: 'Brasileirao', country: 'Brazil', emblem: null, type: 'domestic', hasGroups: false, hasKnockout: false },
       WC: { name: 'World Cup Qualifiers', country: 'World', emblem: null, type: 'international', hasGroups: false, hasKnockout: false },
+      ELC: { name: 'EFL Championship', country: 'England', emblem: null, type: 'domestic', hasGroups: false, hasKnockout: false },
+      GBA: { name: 'Super Lig', country: 'Turkey', emblem: null, type: 'domestic', hasGroups: false, hasKnockout: false },
+      PPD: { name: 'Superliga', country: 'Argentina', emblem: null, type: 'domestic', hasGroups: false, hasKnockout: false },
+      ALP: { name: 'Liga Profesional', country: 'Argentina', emblem: null, type: 'domestic', hasGroups: false, hasKnockout: false },
+      CLA: { name: 'Copa Libertadores', country: 'South America', emblem: null, type: 'continental', hasGroups: true, hasKnockout: true },
     };
 
     const countryToCode = {
       'England':'gb-eng','Spain':'es','Germany':'de','Italy':'it','France':'fr',
       'Netherlands':'nl','Portugal':'pt','Brazil':'br','Argentina':'ar','Turkey':'tr',
-      'Belgium':'be','Croatia':'hr','Morocco':'ma','Nigeria':'ng','Senegal':'sn',
-      'Japan':'jp','South Korea':'kr','Australia':'au','Mexico':'mx','USA':'us',
-      'Canada':'ca','Saudi Arabia':'sa','Qatar':'qa','Greece':'gr','Czech Republic':'cz',
-      'Ukraine':'ua','Austria':'at','Switzerland':'ch','Scotland':'gb-sct','Wales':'gb-wls',
-      'Ireland':'ie','Norway':'no','Sweden':'se','Denmark':'dk','Finland':'fi',
-      'Serbia':'rs','Poland':'pl','Romania':'ro','Hungary':'hu','Colombia':'co',
-      'Uruguay':'uy','Chile':'cl','Ecuador':'ec','Paraguay':'py','Peru':'pe',
-      'Cameroon':'cm','Ghana':'gh','Ivory Coast':'ci','Tunisia':'tn','Algeria':'dz',
-      'Egypt':'eg','Iran':'ir','Iraq':'iq','Jordan':'jo','China':'cn',
-      'India':'in','Russia':'ru','Scotland':'gb-sct',
+      'Türkiye':'tr','Belgium':'be','Croatia':'hr','Morocco':'ma','Nigeria':'ng',
+      'Senegal':'sn','Japan':'jp','South Korea':'kr','Australia':'au','Mexico':'mx',
+      'United States':'us','USA':'us','Canada':'ca','Saudi Arabia':'sa','Qatar':'qa',
+      'Greece':'gr','Czech Republic':'cz','Czechia':'cz','Ukraine':'ua','Austria':'at',
+      'Switzerland':'ch','Scotland':'gb-sct','Wales':'gb-wls','Ireland':'ie',
+      'Norway':'no','Sweden':'se','Denmark':'dk','Finland':'fi','Serbia':'rs',
+      'Poland':'pl','Romania':'ro','Hungary':'hu','Colombia':'co','Uruguay':'uy',
+      'Chile':'cl','Ecuador':'ec','Paraguay':'py','Peru':'pe','Cameroon':'cm',
+      'Ghana':'gh','Ivory Coast':'ci','Tunisia':'tn','Algeria':'dz','Egypt':'eg',
+      'Iran':'ir','Iraq':'iq','Jordan':'jo','China':'cn','India':'in','Russia':'ru',
+      'Bosnia and Herzegovina':'ba','DR Congo':'cd','Cape Verde':'cv','Curaçao':'cw',
+      'Saudi Arabia':'sa','Haiti':'ht','Panama':'pa','Honduras':'hn','Costa Rica':'cr',
+      'Jamaica':'jm','Trinidad and Tobago':'tt','Venezuela':'ve','Bolivia':'bo',
+      'Cuba':'cu','El Salvador':'sv','Guatemala':'gt','Nicaragua':'ni','Barbados':'bb',
+      'Suriname':'sr','French Guiana':'gf','Bermuda':'bm','Cayman Islands':'ky',
+      'Iceland':'is','Luxembourg':'lu','Latvia':'lv','Lithuania':'lt','Estonia':'ee',
+      'Slovakia':'sk','Slovenia':'si','Bulgaria':'bg','Belarus':'by','Moldova':'md',
+      'Albania':'al','North Macedonia':'mk','Montenegro':'me','Kosovo':'xk',
+      'Georgia':'ge','Armenia':'am','Azerbaijan':'az','Israel':'il','Cyprus':'cy',
+      'Malta':'mt','Andorra':'ad','San Marino':'sm','Liechtenstein':'li','Monaco':'mc',
+      'Faroe Islands':'fo','Kazakhstan':'kz','Uzbekistan':'uz','Turkmenistan':'tm',
+      'Kyrgyzstan':'kg','Tajikistan':'tj','Afghanistan':'af','Pakistan':'pk',
+      'Bangladesh':'bd','Sri Lanka':'lk','Nepal':'np','Myanmar':'mm','Thailand':'th',
+      'Vietnam':'vn','Indonesia':'id','Malaysia':'my','Philippines':'ph','Singapore':'sg',
+      'Mongolia':'mn','Taiwan':'tw','Hong Kong':'hk','North Korea':'kp',
+      'South Africa':'za','Kenya':'ke','Uganda':'ug','Tanzania':'tz','Ethiopia':'et',
+      'Sudan':'sd','Libya':'ly','Togo':'tg','Benin':'bj','Mali':'ml','Burkina Faso':'bf',
+      'Niger':'ne','Guinea':'gn','Sierra Leone':'sl','Liberia':'lr','Gambia':'gm',
+      'Guinea-Bissau':'gw','Equatorial Guinea':'gq','Gabon':'ga','Congo':'cg',
+      'Chad':'td','Central African Republic':'cf','Mauritania':'mr','Djibouti':'dj',
+      'Somalia':'so','Eritrea':'er','Mozambique':'mz','Madagascar':'mg','Mauritius':'mu',
+      'Zambia':'zm','Zimbabwe':'zw','Malawi':'mw','Namibia':'na','Botswana':'bw',
+      'Lesotho':'ls','Eswatini':'sz','Angola':'ao','Rwanda':'rw','Burundi':'bi',
+      'Comoros':'km','Seychelles':'sc','Samoa':'ws','Tonga':'to','Fiji':'fj',
+      'Vanuatu':'vu','Papua New Guinea':'pg','Solomon Islands':'sb','New Caledonia':'nc',
     };
 
     function getFlagFromCountry(country) {
@@ -607,21 +640,15 @@
 
     function renderAPIGroups(standingsData, leagueCode) {
       const grid = document.getElementById('group-grid');
-      grid.innerHTML = '';
-      if (!standingsData || !standingsData.standings) {
-        grid.innerHTML = '<div class="no-data"><h3>No group data available</h3><p>This competition may not have a group stage format.</p></div>';
-        return;
-      }
+      if (!standingsData || !standingsData.standings) return;
 
-      const preds = loadPreds();
-      const groupPrefix = leagueCode === 'CL' ? 'Group ' : leagueCode === 'EL' ? 'Group ' : 'GROUP_';
       const hasGroup = standingsData.standings.some(t => t.type === 'TOTAL' && t.group);
-
       if (!hasGroup) {
         renderAPILeagueTable(standingsData, leagueCode);
         return;
       }
 
+      const season = `${currentYear}/${String(currentYear+1).slice(2)}`;
       standingsData.standings.forEach(table => {
         if (table.type !== 'TOTAL' || !table.group) return;
         const groupName = table.group;
@@ -634,7 +661,7 @@
         });
 
         card.innerHTML = `
-          <h3>${groupName} <span class="badge">Live</span></h3>
+          <h3>${groupName} <span class="badge">${season}</span></h3>
           <table>
             <thead><tr><th>#</th><th></th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
             <tbody>${table.table.map((entry,i) => {
@@ -651,7 +678,7 @@
 
     function renderAPILeagueTable(standingsData, leagueCode) {
       const grid = document.getElementById('group-grid');
-      grid.innerHTML = '';
+      if (!standingsData || !standingsData.standings) return;
       const mainTable = standingsData.standings.find(t => t.type === 'TOTAL');
       if (!mainTable) return;
       const card = document.createElement('div');
@@ -661,8 +688,9 @@
         teamFlags[entry.team.name] = getFlagFromCountry(entry.team.area ? entry.team.area.name : '');
         TEAM_FLAG_MAP[entry.team.name] = teamFlags[entry.team.name];
       });
+      const season = `${currentYear}/${String(currentYear+1).slice(2)}`;
       card.innerHTML = `
-        <h3>${COMPETITIONS[leagueCode]?.name || leagueCode} Standings <span class="badge">2025/26</span></h3>
+        <h3>${COMPETITIONS[leagueCode]?.name || leagueCode} <span class="badge">${season}</span></h3>
         <table>
           <thead><tr><th>#</th><th></th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
           <tbody>${mainTable.table.map((entry,i) => {
@@ -826,13 +854,18 @@
       const bracket = document.getElementById('bracket');
       bracket.innerHTML = '';
       if (!knockoutData || knockoutData.length === 0) {
-        bracket.innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No knockout round data available for this competition.</p></div>';
+        bracket.innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No knockout rounds available for this season.</p></div>';
         return;
       }
 
-      const roundOrder = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32'];
-      const roundLabels = { 'FINAL':'Final','SEMI_FINAL':'Semi-finals','QUARTER_FINAL':'Quarter-finals','ROUND_OF_16':'Round of 16','ROUND_OF_32':'Round of 32' };
-      const seeds = loadSeeds();
+      const roundOrder = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32','PLAYOFF_ROUND','QUALIFYING_PLAYOFF','THIRD_QUALIFYING_ROUND','SECOND_QUALIFYING_ROUND','FIRST_QUALIFYING_ROUND'];
+      const roundLabels = {
+        'FINAL':'Final','SEMI_FINAL':'Semi-finals','QUARTER_FINAL':'Quarter-finals',
+        'ROUND_OF_16':'Round of 16','ROUND_OF_32':'Round of 32',
+        'PLAYOFF_ROUND':'Playoff Round','QUALIFYING_PLAYOFF':'Qualifying Playoff',
+        'THIRD_QUALIFYING_ROUND':'3rd Qualifying','SECOND_QUALIFYING_ROUND':'2nd Qualifying',
+        'FIRST_QUALIFYING_ROUND':'1st Qualifying'
+      };
 
       const grouped = {};
       knockoutData.forEach(m => {
@@ -845,7 +878,8 @@
 
       const desc = document.createElement('div');
       desc.className = 'b-desc';
-      desc.innerHTML = `<h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">${COMPETITIONS[leagueCode]?.name || leagueCode} — Knockout rounds.</p>`;
+      const season = `${currentYear}/${String(currentYear+1).slice(2)}`;
+      desc.innerHTML = `<h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">${COMPETITIONS[leagueCode]?.name || leagueCode} ${season} — ${knockoutData.length} knockout matches across ${rounds.length} rounds.</p>`;
       bracket.appendChild(desc);
 
       const scroll = document.createElement('div');
@@ -858,7 +892,7 @@
         col.className = 'b-col';
         const label = document.createElement('div');
         label.className = 'b-label';
-        label.textContent = roundLabels[round] || round;
+        label.textContent = roundLabels[round] || round.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
         col.appendChild(label);
         const matchList = document.createElement('div');
         matchList.className = 'b-matches';
@@ -873,6 +907,8 @@
 
           const hScore = m.score.fullTime.home;
           const aScore = m.score.fullTime.away;
+          const hAgg = m.score.aggregateHome;
+          const aAgg = m.score.aggregateAway;
           const isFT = m.status === 'FINISHED';
           const hPen = m.score.penalties ? m.score.penalties.home : null;
           const aPen = m.score.penalties ? m.score.penalties.away : null;
@@ -889,24 +925,27 @@
           let hCls = 'b-team top';
           let aCls = 'b-team bottom';
           if (isFT) {
-            const hWon = hScore > aScore || (hScore === aScore && hPen !== null && hPen > aPen);
-            const aWon = aScore > hScore || (hScore === aScore && aPen !== null && aPen > hPen);
+            const hTotal = hAgg !== null && hAgg !== undefined ? hAgg : hScore;
+            const aTotal = aAgg !== null && aAgg !== undefined ? aAgg : aScore;
+            const hWon = hTotal > aTotal || (hTotal === aTotal && hScore > aScore) || (hTotal === aTotal && hScore === aScore && hPen !== null && hPen > aPen);
+            const aWon = aTotal > hTotal || (hTotal === aTotal && aScore > hScore) || (hTotal === aTotal && hScore === aScore && aPen !== null && aPen > aPen);
             if (hWon) hCls += ' picked';
             if (aWon) aCls += ' picked';
           }
 
-          const penNote = (hPen !== null && aPen !== null) ? `<span style="font-size:0.65rem;color:var(--muted-foreground);margin-left:4px">(${hPen}-${aPen} pen)</span>` : '';
+          const aggStr = (hAgg !== null && hAgg !== undefined && aAgg !== null && aAgg !== undefined) ? `<span style="font-size:0.65rem;color:var(--muted-foreground);margin-left:3px">agg ${hAgg}-${aAgg}</span>` : '';
+          const penStr = (hPen !== null && aPen !== null) ? `<span style="font-size:0.65rem;color:var(--muted-foreground);margin-left:3px">(${hPen}-${aPen} pen)</span>` : '';
 
           card.innerHTML = `
             <button type="button" class="${hCls}">
               ${hFlag ? `<img src="${flagUrlLg(hFlag)}" alt="" class="b-flag">` : '<span class="b-flag ph"></span>'}
               <span class="b-name">${hName}</span>
-              ${isFT ? `<span style="margin-left:auto;font-weight:700;font-size:0.875rem">${hScore}${hPen !== null ? '<sup style="font-size:0.6rem;color:var(--muted-foreground)">p</sup>' : ''}</span>` : ''}
+              ${isFT ? `<span style="margin-left:auto;font-weight:700;font-size:0.8125rem">${hScore}${aggStr}${penStr}</span>` : ''}
             </button>
             <button type="button" class="${aCls}">
               ${aFlag ? `<img src="${flagUrlLg(aFlag)}" alt="" class="b-flag">` : '<span class="b-flag ph"></span>'}
               <span class="b-name">${aName}</span>
-              ${isFT ? `<span style="margin-left:auto;font-weight:700;font-size:0.875rem">${aScore}${aPen !== null ? '<sup style="font-size:0.6rem;color:var(--muted-foreground)">p</sup>' : ''}</span>` : ''}
+              ${isFT ? `<span style="margin-left:auto;font-weight:700;font-size:0.8125rem">${aScore}</span>` : ''}
             </button>
           `;
           row.appendChild(card);
@@ -946,14 +985,16 @@
         return;
       }
 
-      const hasBracket = config.hasGroups || config.hasKnockout;
-      document.querySelector('.tabs').style.display = hasBracket ? 'inline-flex' : 'none';
+      document.querySelector('.tabs').style.display = 'inline-flex';
       document.querySelector('.tab[data-tab="groups"]').classList.add('active');
       document.getElementById('groups-view').classList.add('active');
       document.getElementById('knockouts-view').classList.remove('active');
 
       const grid = document.getElementById('group-grid');
-      grid.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><span>Loading ' + (currentYear) + ' season data...</span></div>';
+      grid.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><span>Loading ' + currentYear + ' season data...</span></div>';
+
+      let hasStandings = false;
+      let hasKnockout = false;
 
       const standingsData = await fetchLeagueStandings(leagueKey, currentYear);
       const matchesData = await fetchLeagueMatches(leagueKey, currentYear);
@@ -961,6 +1002,7 @@
       grid.innerHTML = '';
 
       if (standingsData && standingsData.standings) {
+        hasStandings = true;
         const hasGroup = standingsData.standings.some(t => t.group);
         if (hasGroup) {
           renderAPIGroups(standingsData, leagueKey);
@@ -970,28 +1012,33 @@
       }
 
       if (matchesData && matchesData.matches && matchesData.matches.length > 0) {
-        const knockoutStages = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32'];
+        const knockoutStages = ['FINAL','SEMI_FINAL','QUARTER_FINAL','ROUND_OF_16','ROUND_OF_32','PLAYOFF_ROUND','QUALIFYING_PLAYOFF','THIRD_QUALIFYING_ROUND','SECOND_QUALIFYING_ROUND','FIRST_QUALIFYING_ROUND'];
         const knockoutMatches = matchesData.matches.filter(m => knockoutStages.includes(m.stage));
-        const groupMatchesAPI = matchesData.matches.filter(m => !knockoutStages.includes(m.stage));
+        const regularMatches = matchesData.matches.filter(m => !knockoutStages.includes(m.stage));
 
-        if (groupMatchesAPI.length > 0 && standingsData && standingsData.standings) {
-          const hasGroup = standingsData.standings.some(t => t.group);
+        if (knockoutMatches.length > 0) {
+          hasKnockout = true;
+          renderAPIKnockout(knockoutMatches, leagueKey);
+        } else {
+          document.getElementById('bracket').innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No knockout rounds for this ' + COMPETITIONS[leagueKey].name + ' season.</p></div>';
+        }
+
+        if (regularMatches.length > 0) {
+          const hasGroup = standingsData && standingsData.standings && standingsData.standings.some(t => t.group);
           if (!hasGroup) {
             renderAPIMatchesByMatchday(matchesData, leagueKey);
           }
         }
-
-        if (knockoutMatches.length > 0) {
-          renderAPIKnockout(knockoutMatches, leagueKey);
-        } else {
-          document.getElementById('bracket').innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No knockout rounds available for this season.</p></div>';
-        }
       } else {
-        document.getElementById('bracket').innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No knockout data for this season.</p></div>';
+        document.getElementById('bracket').innerHTML = '<div class="b-desc"><h2 class="b-desc-h">Knockout Bracket</h2><p class="b-desc-p">No match data for this season.</p></div>';
       }
 
-      if (!standingsData && !matchesData) {
-        grid.innerHTML = '<div class="no-data"><h3>Could not load data</h3><p>No data available for ' + COMPETITIONS[leagueKey].name + ' ' + currentYear + '. This season may not be available on the free API tier.</p></div>';
+      if (!hasStandings && !matchesData) {
+        grid.innerHTML = '<div class="no-data"><h3>No data for ' + COMPETITIONS[leagueKey].name + '</h3><p>Season ' + currentYear + '/' + String(currentYear+1).slice(2) + ' is not available. Try a different year or competition.</p></div>';
+      }
+
+      if (!hasKnockout && hasStandings) {
+        document.querySelector('.tabs').style.display = 'none';
       }
     }
 
