@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <script src="data.js"></script>
 </head>
 <body>
   <div class="container">
@@ -78,10 +77,11 @@
     </div>
 
     <div id="knockouts-view" class="tab-content">
-      <div id="bracket"></div>
+      <div id="bracket"><div class="loading-spinner"><div class="spinner"></div><span>Loading bracket...</span></div></div>
     </div>
   </div>
 
+  <script src="data.js"></script>
   <script>
     const liveTime = document.getElementById('live-time');
     function tickClock() {
@@ -1264,7 +1264,7 @@
     });
 
     updateYearDisplay();
-    loadLeague('wc');
+    setTimeout(() => loadLeague('wc'), 0);
   </script>
 </body>
 </html>
