@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script src="data.js"></script>
 </head>
 <body>
   <div class="container">
@@ -96,7 +97,34 @@
     const BRACKET_SEED_KEY = 'wc26_bracket_seeds';
 
     let currentYear = new Date().getFullYear();
-    const YEAR_RANGE = { min: 2002, max: new Date().getFullYear() };
+    const YEAR_RANGE = { min: 2018, max: new Date().getFullYear() };
+
+    function getAvailableYears(leagueCode) {
+      const data = HISTORICAL_DATA[leagueCode];
+      if (!data) return [];
+      return Object.keys(data).map(Number).sort((a,b)=>b-a);
+    }
+
+    function preloadFlags() {
+      for (const leagueCode in HISTORICAL_DATA) {
+        for (const year in HISTORICAL_DATA[leagueCode]) {
+          const season = HISTORICAL_DATA[leagueCode][year];
+          if (season.groups) {
+            for (const gKey in season.groups) {
+              (season.groups[gKey].teams || []).forEach(t => { TEAM_FLAG_MAP[t.name] = t.flag; });
+            }
+          }
+          if (season.table) {
+            season.table.forEach(t => { TEAM_FLAG_MAP[t.name] = t.flag; });
+          }
+          (season.knockout || []).forEach(m => {
+            const hFlag = 'gb-eng';
+            const aFlag = 'gb-eng';
+          });
+        }
+      }
+    }
+    preloadFlags();
 
     function loadPreds() {
       try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
@@ -623,19 +651,101 @@
     async function fetchLeagueStandings(leagueCode, year) {
       const seasonParam = year ? `?season=${year}` : '';
       const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/standings${seasonParam}`);
-      return data;
+      if (data && data.standings) return data;
+      return buildStaticStandings(leagueCode, year);
     }
 
     async function fetchLeagueMatches(leagueCode, year) {
       const seasonParam = year ? `?season=${year}&` : '?';
       const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/matches${seasonParam}status=SCHEDULED,IN_PLAY,PAUSED,FINISHED`);
-      return data;
+      if (data && data.matches) return data;
+      return buildStaticMatches(leagueCode, year);
     }
 
-    async function fetchLeagueTeams(leagueCode, year) {
-      const seasonParam = year ? `?season=${year}` : '';
-      const data = await fetchAPI(`https://api.football-data.org/v4/competitions/${leagueCode}/teams${seasonParam}`);
-      return data;
+    function buildStaticStandings(leagueCode, year) {
+      const comp = HISTORICAL_DATA[leagueCode];
+      if (!comp || !comp[year]) return null;
+      const season = comp[year];
+
+      if (season.groups) {
+        const standings = Object.entries(season.groups).map(([groupKey, group]) => ({
+          type: "TOTAL",
+          group: "Group " + groupKey,
+          table: group.teams.map(t => ({
+            position: group.teams.indexOf(t) + 1,
+            team: { name: t.name, area: { name: t.flag === 'gb-eng' ? 'England' : t.flag === 'gb-sct' ? 'Scotland' : t.flag === 'gb-wls' ? 'Wales' : t.flag === 'nl' ? 'Netherlands' : t.flag === 'de' ? 'Germany' : t.flag === 'es' ? 'Spain' : t.flag === 'it' ? 'Italy' : t.flag === 'fr' ? 'France' : t.flag === 'pt' ? 'Portugal' : t.flag === 'br' ? 'Brazil' : t.flag === 'ar' ? 'Argentina' : t.flag === 'be' ? 'Belgium' : t.flag === 'rs' ? 'Serbia' : t.flag === 'ua' ? 'Ukraine' : t.flag === 'ch' ? 'Switzerland' : t.flag === 'at' ? 'Austria' : t.flag === 'hr' ? 'Croatia' : t.flag === 'cz' ? 'Czech Republic' : t.flag === 'dk' ? 'Denmark' : t.flag === 'gr' ? 'Greece' : t.flag === 'tr' ? 'Turkey' : t.flag === 'il' ? 'Israel' : t.flag === 'mc' ? 'Monaco' : t.flag === 'kr' ? 'South Korea' : t.flag === 'jp' ? 'Japan' : t.flag === 'au' ? 'Australia' : t.flag === 'us' ? 'USA' : t.flag === 'mx' ? 'Mexico' : t.flag === 'sg' ? 'Singapore' : '', shortName: t.name, tla: t.name.slice(0,3).toUpperCase() } },
+            playedGames: t.played,
+            won: t.won,
+            draw: t.drawn,
+            lost: t.lost,
+            goalsFor: t.gf,
+            goalsAgainst: t.ga,
+            goalDifference: t.gd,
+            points: t.pts,
+          }))
+        }));
+        return { standings };
+      }
+
+      if (season.table) {
+        const table = season.table.map(t => ({
+          position: season.table.indexOf(t) + 1,
+          team: { name: t.name, area: { name: t.flag === 'gb-eng' ? 'England' : t.flag === 'gb-sct' ? 'Scotland' : t.flag === 'gb-wls' ? 'Wales' : t.flag === 'nl' ? 'Netherlands' : t.flag === 'de' ? 'Germany' : t.flag === 'es' ? 'Spain' : t.flag === 'it' ? 'Italy' : t.flag === 'fr' ? 'France' : t.flag === 'pt' ? 'Portugal' : t.flag === 'br' ? 'Brazil' : t.flag === 'ar' ? 'Argentina' : t.flag === 'be' ? 'Belgium' : t.flag === 'rs' ? 'Serbia' : t.flag === 'ua' ? 'Ukraine' : t.flag === 'ch' ? 'Switzerland' : t.flag === 'at' ? 'Austria' : t.flag === 'hr' ? 'Croatia' : t.flag === 'cz' ? 'Czech Republic' : t.flag === 'dk' ? 'Denmark' : t.flag === 'gr' ? 'Greece' : t.flag === 'tr' ? 'Turkey' : t.flag === 'il' ? 'Israel' : t.flag === 'mc' ? 'Monaco' : t.flag === 'kp' ? 'South Korea' : t.flag === 'jp' ? 'Japan' : t.flag === 'au' ? 'Australia' : t.flag === 'us' ? 'USA' : t.flag === 'mx' ? 'Mexico' : t.flag === 'sg' ? 'Singapore' : '', shortName: t.name, tla: t.name.slice(0,3).toUpperCase() } },
+          playedGames: t.played,
+          won: t.won,
+          draw: t.drawn,
+          lost: t.lost,
+          goalsFor: t.gf,
+          goalsAgainst: t.ga,
+          goalDifference: t.gd,
+          points: t.pts,
+        }));
+        return { standings: [{ type: "TOTAL", table }] };
+      }
+      return null;
+    }
+
+    function buildStaticMatches(leagueCode, year) {
+      const comp = HISTORICAL_DATA[leagueCode];
+      if (!comp || !comp[year]) return null;
+      const season = comp[year];
+      const matches = [];
+
+      if (season.groups) {
+        Object.values(season.groups).forEach(group => {
+          (group.matches || []).forEach(m => {
+            matches.push({
+              id: (leagueCode + year + m.home + m.away).replace(/\s/g,''),
+              homeTeam: { name: m.home, area: { name: '' } },
+              awayTeam: { name: m.away, area: { name: '' } },
+              score: { fullTime: { home: m.hg, away: m.ag }, halfTime: { home: null, away: null }, penalties: null },
+              status: "FINISHED",
+              stage: "GROUP_STAGE",
+              matchday: m.md || 1,
+            });
+          });
+        });
+      }
+
+      (season.knockout || []).forEach(m => {
+        matches.push({
+          id: (leagueCode + year + "ko" + m.home + m.away).replace(/\s/g,''),
+          homeTeam: { name: m.home, area: { name: '' } },
+          awayTeam: { name: m.away, area: { name: '' } },
+          score: {
+            fullTime: { home: m.hg, away: m.ag },
+            halfTime: { home: null, away: null },
+            penalties: m.penalties ? { home: parseInt(m.penalties.split('-')[0]), away: parseInt(m.penalties.split('-')[1]) } : null,
+            aggregateHome: m.ahg === undefined ? null : m.ahg,
+            aggregateAway: m.aag === undefined ? null : m.aag,
+          },
+          status: "FINISHED",
+          stage: m.stage,
+          matchday: m.md || 1,
+        });
+      });
+
+      return matches.length > 0 ? { matches } : null;
     }
 
     function renderAPIGroups(standingsData, leagueCode) {
@@ -714,10 +824,13 @@
 
       const groupedMatches = {};
       allMatches.forEach(m => {
+        if (knockoutStages.includes(m.stage)) return;
         const md = m.matchday || m.round || 1;
         if (!groupedMatches[md]) groupedMatches[md] = [];
         groupedMatches[md].push(m);
       });
+
+      if (Object.keys(groupedMatches).length === 0) return;
 
       const sortedMDs = Object.keys(groupedMatches).sort((a,b) => Number(a) - Number(b));
       const latestMDs = sortedMDs.slice(-8);
@@ -727,33 +840,29 @@
       card.style.gridColumn = '1 / -1';
 
       const season = `${currentYear}/${String(currentYear+1).slice(2)}`;
-      let html = `<h3>${COMPETITIONS[leagueCode]?.name || leagueCode} Results <span class="badge">${finishedCount}/${allMatches.length} played</span></h3>`;
+      let html = `<h3>${COMPETITIONS[leagueCode]?.name || leagueCode} Results <span class="badge">${finishedCount} matches</span></h3>`;
 
       latestMDs.forEach(md => {
         const mms = groupedMatches[md];
-        html += `<div class="fixtures-title">${mms[0] && mms[0].stage && knockoutStages.includes(mms[0].stage) ? mms[0].stage.replace(/_/g,' ') : 'Matchday ' + md}</div><div class="fixture-list">`;
+        html += `<div class="fixtures-title">Matchday ${md}</div><div class="fixture-list">`;
         mms.forEach(m => {
           const hName = m.homeTeam.name;
           const aName = m.awayTeam.name;
-          const hFlag = getFlagFromCountry(m.homeTeam.area ? m.homeTeam.area.name : '');
-          const aFlag = getFlagFromCountry(m.awayTeam.area ? m.awayTeam.area.name : '');
+          const hFlag = TEAM_FLAG_MAP[hName] || getFlagFromCountry(m.homeTeam.area ? m.homeTeam.area.name : '') || 'xx';
+          const aFlag = TEAM_FLAG_MAP[aName] || getFlagFromCountry(m.awayTeam.area ? m.awayTeam.area.name : '') || 'xx';
           TEAM_FLAG_MAP[hName] = hFlag;
           TEAM_FLAG_MAP[aName] = aFlag;
           const hScore = m.score.fullTime.home;
           const aScore = m.score.fullTime.away;
           const isFT = m.status === 'FINISHED';
-          const hHT = m.score.halfTime ? m.score.halfTime.home : null;
-          const aHT = m.score.halfTime ? m.score.halfTime.away : null;
           const hPen = m.score.penalties ? m.score.penalties.home : null;
           const aPen = m.score.penalties ? m.score.penalties.away : null;
           const hAgg = m.score.aggregateHome;
           const aAgg = m.score.aggregateAway;
 
-          const htStr = (hHT !== null && aHT !== null && isFT) ? ` (HT ${hHT}-${aHT})` : '';
-          const aggStr = (hAgg !== null && hAgg !== undefined && aAgg !== null && aAgg !== undefined) ? ` [agg ${hAgg}-${aAgg}]` : '';
-          const penStr = (hPen !== null && aPen !== null) ? ` (${hPen}-${aPen} pen)` : '';
-
-          const scoreDisplay = isFT ? `${hScore} - ${aScore}${penStr}${aggStr}${htStr}` : 'vs';
+          let scoreDisplay = isFT ? `${hScore} - ${aScore}` : 'vs';
+          if (hPen !== null && aPen !== null) scoreDisplay += ` (${hPen}-${aPen} pen)`;
+          if (hAgg !== null && hAgg !== undefined && aAgg !== null && aAgg !== undefined) scoreDisplay += ` [agg ${hAgg}-${aAgg}]`;
 
           html += `
             <div class="fixture-item">
@@ -831,8 +940,8 @@
         grouped[round].forEach((m, mi) => {
           const hName = m.homeTeam.name;
           const aName = m.awayTeam.name;
-          const hFlag = getFlagFromCountry(m.homeTeam.area ? m.homeTeam.area.name : '');
-          const aFlag = getFlagFromCountry(m.awayTeam.area ? m.awayTeam.area.name : '');
+          const hFlag = TEAM_FLAG_MAP[hName] || getFlagFromCountry(m.homeTeam.area ? m.homeTeam.area.name : '') || 'xx';
+          const aFlag = TEAM_FLAG_MAP[aName] || getFlagFromCountry(m.awayTeam.area ? m.awayTeam.area.name : '') || 'xx';
           TEAM_FLAG_MAP[hName] = hFlag;
           TEAM_FLAG_MAP[aName] = aFlag;
 
